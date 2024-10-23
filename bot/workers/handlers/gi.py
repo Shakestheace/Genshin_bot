@@ -1,4 +1,5 @@
 import asyncio
+import time
 
 from bot.utils.gi_utils import enka_update, get_enka_card, get_enka_profile, get_gi_info
 from bot.utils.log_utils import log
@@ -14,6 +15,7 @@ def enka_handler(event, args):
     Arguments:
     uid: {genshin player uid} (Required)
     -c or --card {character name}: use quotes if the name has spaces eg:- "Hu tao"; Also supports lookups
+    -cs or --cards {characters} same as -c but for multiple characters; delimited by commas
     -t <int> {template}: card generation template; currently only two templates exist; default 1
     Flags:
     -p or --profile: To get player card instead
@@ -36,7 +38,9 @@ def enka_handler(event, args):
             ["--no_top", "store_false"],
             ["--update", "store_true"],
             "-c",
+            "-cs",
             "--card",
+            "--cards",
             ["-p", "store_true"],
             ["--profile", "store_true"],
             "-t",
@@ -44,14 +48,14 @@ def enka_handler(event, args):
             get_unknown=True,
         )
         card = arg.c or arg.card
-
+        cards = arg.cs or arg.cards
         prof = arg.p or arg.profile
         akasha = arg.no_top
         if arg.update:
             enka_update()
-            if not (card or prof):
+            if not (card or cards or prof):
                 return event.reply("Updated enka assets.")
-        if not (card or prof):
+        if not (card or cards or prof):
             return event.reply(f"```{enka_handler.__doc__}```")
         if arg.t not in ("1", "2"):
             arg.t = 1
@@ -90,8 +94,44 @@ def enka_handler(event, args):
             result.card[0].card.save(path)
             event.reply_file(path, file_name, f"*{caption}*")
             return s_remove(path)
+        if cards:
+            ids = str()
+            errors = str()
+            for names in cards.split(","):
+                info = asyncio.run(get_gi_info(query=card))
+                if not info:
+                    errors += f"{names}, "
+                    continue
+                char_id = info.get("id")
+                ids += f"{char_id},"
+            error_txt = f"*Character(s) not found.*\nYou searched for {errors}.\nNot what you searched for?\nTry again with double quotes"
+            if not ids:
+                return await event.reply(error_txt)
+            ids = ids.strip(",")
+            errors = errors.strip(", ")
+            result, error = asyncio.run(
+                get_enka_card(
+                    args, ids, akasha=akasha, huid=arg.hide_uid, template=arg.t)
+                )
+            if error:
+                return
+
+            if errors:
+                event.reply(error_txt)
+                time.sleep(1)
+            return send_multi_cards(event, result, profile)
     except Exception:
         log(Exception)
     finally:
         if error:
             return event.reply(f"*Error:*\n{error}")
+
+def send_multi_cards(event, results, profile):
+    for card in result.card:
+        caption = f"{profile.player.name}'s current {card.name} build"
+        file_name = caption + ".png"
+        path = "enka/" + file_name
+        card.card.save(path)
+        event.reply_file(path, file_name, f"*{caption}*")
+        s_remove(path)
+        time.sleep(1)

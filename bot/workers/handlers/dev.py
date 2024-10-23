@@ -86,7 +86,7 @@ def getlogs(event, args):
         pre_event = event
         for smsg in split_text(msg):
             smsg = f"```\n{smsg}\n```"
-            pre_event = pre_event(smsg, quote=True)
+            pre_event = pre_event.reply(smsg, quote=True)
             time.sleep(5)
     else:
         return getlogs(event, None)
