@@ -43,7 +43,7 @@ async def restart_handler():
                 msg = "*No major update found!*\n" f"`Bot restarted!`"
         else:
             return
-        chat_id, msg_id = map(int, sys.argv[2].split(":"))
-        await sync_to_async(_bot.greenAPI.sending.sendMessage, chat_id, msg, msg_id)
+        chat_id, msg_id = map(str, sys.argv[2].split(":"))
+        _bot.greenAPI.sending.sendMessage(chat_id, msg, msg_id)
     except Exception:
         await logger(Exception)
