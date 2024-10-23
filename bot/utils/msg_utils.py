@@ -78,7 +78,7 @@ class Message:
         return self
 
     async def reply(self, text=None, file=None, file_name=None, quote=True):
-        if not constructed:
+        if not self.constructed:
             raise Exception("Method not ready.")
         if file and file_name:
             return await self.reply_file(file, file_name, text, quote)
