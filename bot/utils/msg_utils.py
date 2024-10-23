@@ -85,6 +85,7 @@ class Message:
         if not text:
             raise Exception("Specify a text to reply with.")
         msg_id = self.id if quote else None
+        print("here.")
         response = await sync_to_async(
             self.client.sending.sendMessage, self.chat.id, text, msg_id
         )
