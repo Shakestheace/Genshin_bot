@@ -23,17 +23,15 @@ def enka_update():
 
 
 async def get_enka_profile(uid, card=False, template=1):
-    error = False
+    error = None
     result = None
     try:
         async with encbanner.ENC(uid=uid) as encard:
             result = await encard.profile(card=card, teamplate=template)
     except enc_error.ENCardError as e:
-        error = True
-        result = e
+        error = e
     except Exception as e:
-        error = True
-        result = e
+        error = e
         await logger(Exception)
     finally:
         return result, error

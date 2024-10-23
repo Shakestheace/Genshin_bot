@@ -3,6 +3,7 @@ import asyncio
 from bot.utils.gi_utils import enka_update, get_enka_card, get_enka_profile, get_gi_info
 from bot.utils.log_utils import log
 from bot.utils.msg_utils import get_args
+from bot.utils.msg_utils import s_remove
 
 
 def enka_handler(event, args):
@@ -43,6 +44,7 @@ def enka_handler(event, args):
             get_unknown=True,
         )
         card = arg.c or arg.card
+
         prof = arg.p or arg.profile
         akasha = arg.no_top
         if arg.update:
@@ -66,7 +68,8 @@ def enka_handler(event, args):
             file_name = caption + ".png"
             path = "enka/" + file_name
             profile.card.save(path)
-            return event.reply_file(path, file_name, f"*{caption}*")
+            event.reply_file(path, file_name, f"*{caption}*")
+            return s_remove(path)
         if card:
             info = asyncio.run(get_gi_info(query=card))
             if not info:
@@ -81,11 +84,12 @@ def enka_handler(event, args):
             )
             if error:
                 return
-            caption = f"{profile.player.name}'s {info.get('name')} current build"
+            caption = f"{profile.player.name}'s current {info.get('name')} build"
             file_name = caption + ".png"
             path = "enka/" + file_name
             result.card[0].card.save(path)
-            return event.reply_file(path, file_name, f"*{caption}*")
+            event.reply_file(path, file_name, f"*{caption}*")
+            return s_remove(path)
     except Exception:
         log(Exception)
     finally:
