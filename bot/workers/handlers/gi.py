@@ -18,6 +18,7 @@ def enka_handler(event, args):
     -cs or --cards {characters} same as -c but for multiple characters; delimited by commas
     -t <int> {template}: card generation template; currently only two templates exist; default 1
     Flags:
+    -d or --dump: Dump all character build from the given uid
     -p or --profile: To get player card instead
     --hide_uid: Hide uid in card
     --no_top: Remove akasha ranking from card
@@ -143,6 +144,7 @@ def enka_handler(event, args):
 
 def send_multi_cards(event, results, profile):
     for card in results.card:
+        print(card.name)
         caption = f"{profile.player.name}'s current {card.name} build"
         file_name = caption + ".png"
         path = "enka/" + file_name
