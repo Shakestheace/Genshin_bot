@@ -24,9 +24,9 @@ class Config:
                 "ALWAYS_DEPLOY_LATEST", default=False, cast=bool
             )
             self.ALLOWED_CHATS = config("ALLOWED_CHATS", default="")
-            self.API_KEY = config("API_KEY", default=6, cast=int)
+            self.API_KEY = config("API_KEY", default="")
             self.API_HASH = config(
-                "API_HASH", default="eb06d4abfb49dc3eeb1aeb98ae0f581e"
+                "API_HASH", default=""
             )
             self.PH_NUMBER = config("PH_NUMBER", default="")
 
