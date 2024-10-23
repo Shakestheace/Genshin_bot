@@ -14,7 +14,7 @@ async def get_gi_info(folder="characters", query="chiori", direct=False):
         result = await requests.get(url)
         if direct:
             return await result.json()
-        info = await result.json().get("result")
+        info = (await result.json()).get("result")
     return info
 
 
