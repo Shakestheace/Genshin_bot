@@ -1,6 +1,11 @@
 from bot.config import conf
 from bot.utils.log_utils import logger
-from bot.utils.msg_utils import chat_is_allowed, construct_event, event_handler, mentioned
+from bot.utils.msg_utils import (
+    chat_is_allowed,
+    construct_event,
+    event_handler,
+    mentioned,
+)
 
 from .dev import eval_handler, getlogs
 from .manage import pause_handler, restart_handler, update_handler
