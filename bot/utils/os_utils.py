@@ -14,7 +14,6 @@ if not os.path.isdir("enka/"):
     os.mkdir("enka/")
 
 
-
 async def qclean():
     try:
         os.system("rm -rf downloads/*")

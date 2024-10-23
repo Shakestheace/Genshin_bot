@@ -3,7 +3,6 @@ import sys
 import threading
 
 from bot import _bot
-from bot.utils.bot_utils import sync_to_async
 from bot.utils.log_utils import log, logger
 
 from .event import handler
