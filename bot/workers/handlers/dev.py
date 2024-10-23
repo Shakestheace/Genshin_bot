@@ -57,7 +57,7 @@ async def eval_handler(event, cmd):
         final_output = "*Python3:*\n```{}```\n\n*Output:*\n```{}```\n".format(
             cmd, evaluation
         )
-        await event(final_output)
+        await event.reply(final_output)
 
 
 async def aexec(code, event):
@@ -90,4 +90,4 @@ async def getlogs(event, args):
             pre_event = await pre_event(smsg, quote=True)
             await asyncio.sleep(5)
     else:
-        return await getlogs(event, None, client)
+        return await getlogs(event, None)

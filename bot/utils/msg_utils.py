@@ -137,9 +137,10 @@ async def event_handler(
     default_args: str = False,
     use_default_args=False,
 ):
+    etext = event.text.split(maxsplit=1)[1]
     args = (
-        event.text.split(split_args, maxsplit=1)[1].strip()
-        if len(event.text.split()) > 1
+        etext.split(split_args, maxsplit=1)[1].strip()
+        if len(etext.split()) > 1
         else None
     )
     args = default_args if use_default_args and default_args is not False else args

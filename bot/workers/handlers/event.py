@@ -9,6 +9,7 @@ from bot.utils.msg_utils import (
 
 from .dev import eval_handler, getlogs
 from .manage import pause_handler, restart_handler, update_handler
+from .gi import enka_handler
 
 
 async def handler(type_webhook: str, body: dict) -> None:
