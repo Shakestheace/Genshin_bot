@@ -57,7 +57,9 @@ def enka_handler(event, args):
         if error:
             return
         if prof:
-            profile, error = asyncio.run(get_enka_profile(args, card=True, template=arg.t))
+            profile, error = asyncio.run(
+                get_enka_profile(args, card=True, template=arg.t)
+            )
             if error:
                 return
             caption = f"{profile.player.name}'s profile"
@@ -72,9 +74,11 @@ def enka_handler(event, args):
                     f"*Character not found.*\nYou searched for {card}.\nNot what you searched for?\nTry again with double quotes"
                 )
             char_id = info.get("id")
-            result, error = asyncio.run(get_enka_card(
-                args, char_id, akasha=akasha, huid=arg.hide_uid, template=arg.t
-            ))
+            result, error = asyncio.run(
+                get_enka_card(
+                    args, char_id, akasha=akasha, huid=arg.hide_uid, template=arg.t
+                )
+            )
             if error:
                 return
             caption = f"{profile.player.name}'s {info.get('name')} current build"
