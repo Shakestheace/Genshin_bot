@@ -75,6 +75,7 @@ class Message:
         # To do expand quoted
         self.quoted = body.get("messageData").get("quotedMessage")
         self.constructed = True
+        return self
 
     async def reply(self, text=None, file=None, file_name=None, quote=True):
         if not constructed:
