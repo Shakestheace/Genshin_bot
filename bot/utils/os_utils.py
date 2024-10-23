@@ -1,3 +1,4 @@
+import faulthandler
 import os
 import shutil
 import sys
@@ -13,6 +14,8 @@ if not os.path.isdir("downloads/"):
 if not os.path.isdir("enka/"):
     os.mkdir("enka/")
 
+
+faulthandler.enable()
 
 async def qclean():
     try:
