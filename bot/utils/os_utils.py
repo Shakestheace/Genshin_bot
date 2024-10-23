@@ -17,6 +17,7 @@ if not os.path.isdir("enka/"):
 
 faulthandler.enable()
 
+
 async def qclean():
     try:
         os.system("rm -rf downloads/*")
