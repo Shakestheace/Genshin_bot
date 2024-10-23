@@ -20,6 +20,7 @@ async def handler(type_webhook: str, body: dict) -> None:
 
 async def incoming_msg_handler(event):
     try:
+        print(event.text)
         if not event.text:
             return
         if not mentioned(event):
