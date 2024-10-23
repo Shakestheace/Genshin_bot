@@ -1,5 +1,5 @@
 from bot.config import conf
-from bot.utils.log_utils import logger
+from bot.utils.log_utils import log
 from bot.utils.msg_utils import (
     chat_is_allowed,
     construct_event,
@@ -12,10 +12,10 @@ from .gi import enka_handler
 from .manage import pause_handler, restart_handler, update_handler
 
 
-async def handler(type_webhook: str, body: dict) -> None:
+def handler(type_webhook: str, body: dict) -> None:
     if type_webhook == "incomingMessageReceived":
         event = construct_event(body)
-        await incoming_msg_handler(event)
+        incoming_msg_handler(event)
     # elif type_webhook == "outgoingMessageReceived":
     # await outgoing_msg_handler(body)
     # elif type_webhook == "outgoingAPIMessageReceived":
@@ -24,7 +24,7 @@ async def handler(type_webhook: str, body: dict) -> None:
     # await outgoing_msg_status_handler(body)
 
 
-async def incoming_msg_handler(event):
+def incoming_msg_handler(event):
     try:
         print(event.text)
         if not event.text:
@@ -37,18 +37,18 @@ async def incoming_msg_handler(event):
         text = event.text.split(maxsplit=1)[1]
         command, arg = text.split(maxsplit=1) if len(text.split()) > 1 else (text, None)
         if command.casefold() == f"{cp}enka":
-            return await event_handler(event, enka_handler, require_args=True)
+            return event_handler(event, enka_handler, require_args=True)
 
         if command.casefold() == f"{cp}eval":
-            return await event_handler(event, eval_handler, require_args=True)
+            return event_handler(event, eval_handler, require_args=True)
         if command.casefold() == f"{cp}logs":
-            return await event_handler(event, getlogs)
+            return event_handler(event, getlogs)
 
         if command.casefold() == f"{cp}pause":
-            return await event_handler(event, pause_handler)
+            return event_handler(event, pause_handler)
         if command.casefold() == f"{cp}restart":
-            return await event_handler(event, restart_handler)
+            return event_handler(event, restart_handler)
         if command.casefold() == f"{cp}update":
-            return await event_handler(event, update_handler)
+            return event_handler(event, update_handler)
     except Exception:
-        await logger(Exception)
+        log(Exception)

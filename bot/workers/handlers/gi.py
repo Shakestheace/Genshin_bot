@@ -1,9 +1,11 @@
+import asyncio
+
 from bot.utils.gi_utils import enka_update, get_enka_card, get_enka_profile, get_gi_info
-from bot.utils.log_utils import logger
+from bot.utils.log_utils import log
 from bot.utils.msg_utils import get_args
 
 
-async def enka_handler(event, args):
+def enka_handler(event, args):
     """
     Get a players's character build card from enka
     Requires character build for the specified uid to be public
@@ -44,44 +46,44 @@ async def enka_handler(event, args):
         prof = arg.p or arg.profile
         akasha = arg.no_top
         if arg.update:
-            await enka_update()
+            enka_update()
             if not (card or prof):
-                return await event.reply("Updated enka assets.")
+                return event.reply("Updated enka assets.")
         if not (card or prof):
-            return await event.reply(f"```{enka_handler.__doc__}```")
+            return event.reply(f"```{enka_handler.__doc__}```")
         if arg.t not in ("1", "2"):
-            arg.t = 2
-        profile, error = await get_enka_profile(args)
+            arg.t = 1
+        profile, error = asyncio.run(get_enka_profile(args))
         if error:
             return
         if prof:
-            profile, error = await get_enka_profile(args, card=True, template=arg.t)
+            profile, error = asyncio.run(get_enka_profile(args, card=True, template=arg.t))
             if error:
                 return
             caption = f"{profile.player.name}'s profile"
             file_name = caption + ".png"
             path = "enka/" + file_name
             profile.card.save(path)
-            return await event.reply_file(path, file_name, f"*{caption}*")
+            return event.reply_file(path, file_name, f"*{caption}*")
         if card:
-            info = await get_gi_info(card)
+            info = asyncio.run(get_gi_info(card))
             if not info:
-                return await event.reply(
+                return event.reply(
                     f"*Character not found.*\nYou searched for {card}.\nNot what you searched for?\nTry again with double quotes"
                 )
             char_id = info.get("id")
-            result, error = await get_enka_card(
+            result, error = asyncio.run(get_enka_card(
                 args, char_id, akasha=akasha, huid=arg.hide_uid, template=arg.t
-            )
+            ))
             if error:
                 return
             caption = f"{profile.player.name}'s {info.get('name')} current build"
             file_name = caption + ".png"
             path = "enka/" + file_name
             result.card[0].card.save(path)
-            return await event.reply_file(path, file_name, f"*{caption}*")
+            return event.reply_file(path, file_name, f"*{caption}*")
     except Exception:
-        await logger(Exception)
+        log(Exception)
     finally:
         if error:
-            return await event.reply(f"*Error:*\n{error}")
+            return event.reply(f"*Error:*\n{error}")

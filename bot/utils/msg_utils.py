@@ -75,11 +75,11 @@ class Message:
         self.constructed = True
         return self
 
-    async def reply(self, text=None, file=None, file_name=None, quote=True):
+    def reply(self, text=None, file=None, file_name=None, quote=True):
         if not self.constructed:
             raise Exception("Method not ready.")
         if file and file_name:
-            return await self.reply_file(file, file_name, text, quote)
+            return self.reply_file(file, file_name, text, quote)
         if not text:
             raise Exception("Specify a text to reply with.")
         msg_id = self.id if quote else None
@@ -95,7 +95,7 @@ class Message:
         self.user.name = None
         return self
 
-    async def reply_file(self, file, file_name, caption=None, quote=True):
+    def reply_file(self, file, file_name, caption=None, quote=True):
         msg_id = self.id if quote else None
         # response = await sync_to_async(
         #    self.client.sending.sendFileByUpload,
@@ -109,7 +109,7 @@ class Message:
             self.chat.id, file, file_name, caption, msg_id
         )
         self.id = response.data.get("idMessage")
-        self.text = text
+        self.text = caption
         self.user.id = self.w_id
         self.user.name = None
         return self
@@ -132,7 +132,7 @@ def user_is_owner(user):
     return user.split("@")[0] in conf.OWNER if conf.OWNER else False
 
 
-async def event_handler(
+def event_handler(
     event,
     function,
     require_args=False,
@@ -157,5 +157,5 @@ async def event_handler(
     ):
         if disable_help:
             return
-        return await event.reply(f"```{function.__doc__}```")
-    await function(event, args)
+        return event.reply(f"```{function.__doc__}```")
+    function(event, args)

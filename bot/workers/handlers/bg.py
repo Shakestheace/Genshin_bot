@@ -11,8 +11,7 @@ from .event import handler
 def bg_handler(*args, **kwargs):
     try:
         t = threading.Thread(
-            target=lambda: asyncio.run(bg_task(handler, *args, **kwargs))
-        )
+            target=lambda: handler( *args, **kwargs))
         t.start()
     except Exception:
         log(Exception, critical=True)
@@ -25,9 +24,9 @@ async def bg_task(func, *args, **kwargs):
         await logger(Exception, critical=True)
 
 
-async def onrestart():
+def onrestart():
     if len(sys.argv) == 3:
-        asyncio.create_task(restart_handler())
+        asyncio.run(restart_handler())
 
 
 async def restart_handler():

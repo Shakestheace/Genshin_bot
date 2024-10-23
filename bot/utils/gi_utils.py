@@ -16,8 +16,8 @@ async def get_gi_info(folder="characters", query="chiori", direct=False):
     return info
 
 
-async def enka_update():
-    await encbanner.update()
+def enka_update():
+    asyncio.run(encbanner.update())
 
 
 async def get_enka_profile(uid, card=False, template=1):

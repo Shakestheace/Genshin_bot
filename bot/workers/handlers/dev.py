@@ -9,7 +9,7 @@ from bot.utils.msg_utils import get_args, user_is_owner
 from bot.utils.os_utils import read_n_to_last_line
 
 
-async def eval_handler(event, cmd):
+def eval_handler(event, cmd):
     """
     Evaluate and execute code within bot.
     Global namespace has been cleaned so you'll need to manually import modules
@@ -28,7 +28,7 @@ async def eval_handler(event, cmd):
     redirected_error = sys.stderr = io.StringIO()
     stdout, stderr, exc = None, None, None
     try:
-        await aexec(cmd, event)
+        aexec(cmd, event)
     except Exception:
         exc = traceback.format_exc()
     stdout = redirected_output.getvalue()
@@ -48,7 +48,7 @@ async def eval_handler(event, cmd):
         final_output = "EVAL: {} \n\n OUTPUT: \n{} \n".format(cmd, evaluation)
         with io.BytesIO(str.encode(final_output)) as out_file:
             out_file.name = "eval.text"
-            await event.reply_file(
+            event.reply_file(
                 out_file,
                 out_file.name,
                 caption=cmd,
@@ -57,15 +57,15 @@ async def eval_handler(event, cmd):
         final_output = "*Python3:*\n```{}```\n\n*Output:*\n```{}```\n".format(
             cmd, evaluation
         )
-        await event.reply(final_output)
+        event.reply(final_output)
 
 
-async def aexec(code, event):
-    exec(f"async def __aexec(event): " + "".join(f"\n {l}" for l in code.split("\n")))
-    return await locals()["__aexec"](event)
+def aexec(code, event):
+    exec(f"def __aexec(event): " + "".join(f"\n {l}" for l in code.split("\n")))
+    return locals()["__aexec"](event)
 
 
-async def getlogs(event, args):
+def getlogs(event, args):
     """
     Upload bots logs in txt format.
     Or as a message if '-t' *Number is used
@@ -76,7 +76,7 @@ async def getlogs(event, args):
     if not user_is_owner(user):
         return
     if not args:
-        return await event.reply(file=log_file_name, file_name=log_file_name)
+        return event.reply(file=log_file_name, file_name=log_file_name)
     arg = get_args("-t", to_parse=args)
     if arg.t and arg.t.isdigit() and (ind := int(arg.t)):
         msg = str()
@@ -85,9 +85,9 @@ async def getlogs(event, args):
             msg += "\n"
         msg = "Nothing Here.\nTry with a higher number" if not msg else msg
         pre_event = event
-        for smsg in await split_text(msg):
+        for smsg in split_text(msg):
             smsg = f"```\n{smsg}\n```"
-            pre_event = await pre_event(smsg, quote=True)
-            await asyncio.sleep(5)
+            pre_event = pre_event(smsg, quote=True)
+            time.sleep(5)
     else:
-        return await getlogs(event, None)
+        return getlogs(event, None)

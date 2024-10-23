@@ -6,7 +6,7 @@ from subprocess import run as bashrun
 
 from bot import version_file
 
-from .log_utils import logger
+from .log_utils import log
 
 if not os.path.isdir("downloads/"):
     os.mkdir("downloads/")
@@ -14,23 +14,23 @@ if not os.path.isdir("enka/"):
     os.mkdir("enka/")
 
 
-async def qclean():
+def qclean():
     try:
         os.system("rm -rf downloads/*")
     except Exception:
         pass
 
 
-async def re_x(i, msg):
-    await qclean()
+def re_x(i, msg):
+    qclean()
     os.execl(sys.executable, sys.executable, "-m", "bot", i, msg)
 
 
-async def updater(msg=None):
+def updater(msg=None):
     try:
         with open(version_file, "r") as file:
             ver = file.read()
-        await qclean()
+        qclean()
         Path("update").touch()
         bashrun(["python3", "update.py"])
         with open(version_file, "r") as file:
@@ -49,7 +49,7 @@ async def updater(msg=None):
         else:
             os.execl(sys.executable, sys.executable, "-m", "bot")
     except Exception:
-        await logger(Exception)
+        log(Exception)
 
 
 def s_remove(*filenames, folders=False):

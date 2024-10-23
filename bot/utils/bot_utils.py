@@ -17,7 +17,7 @@ async def sync_to_async(func, *args, wait=True, **kwargs):
         logger(Exception)
 
 
-async def split_text(text: str, split="\n", pre=False):
+def split_text(text: str, split="\n", pre=False):
     current_list = ""
     list_size = 4000
     message_list = []

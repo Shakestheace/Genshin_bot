@@ -26,20 +26,20 @@ LOGS.info("Starting...")
 ######## Connect ########
 
 
-async def main():
+def main():
     try:
 
-        _bot.greenAPI.webhooks.startReceivingNotifications(bg_handler)
+        onrestart()
+        _bot.greenAPI.webhooks_.startReceivingNotifications(bg_handler)
     except Exception:
         LOGS.info(traceback.format_exc())
 
 
 ########### Start ############
-bot = asyncio.new_event_loop()
+
 try:
-    bot.run_until_complete(onrestart())
-    bot.run_until_complete(main())
-    bot.run_forever()
+    if __name__ == '__main__':
+        main()
 except Exception:
     LOGS.critical(traceback.format_exc())
     exit()
