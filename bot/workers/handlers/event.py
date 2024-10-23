@@ -29,7 +29,7 @@ async def incoming_msg_handler(event):
             return
         cp = conf.CMD_PREFIX
         text = event.text.split(maxsplit=1)[1]
-        command, arg = text.split(maxsplit=1)
+        command, arg = text.split(maxsplit=1) if len(text.split()) > 1 else text, None
         if command.casefold() == f"{cp}enka":
             return await event_handler(event, enka_handler, require_args=True)
 
