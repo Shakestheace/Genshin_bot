@@ -13,7 +13,6 @@
 # License can be found in
 # <https://github.com/Nubuki-all/Genshin_bot/blob/main/License> .
 
-import asyncio
 
 from bot.workers.handlers.bg import bg_handler, onrestart
 
@@ -38,7 +37,7 @@ def main():
 ########### Start ############
 
 try:
-    if __name__ == '__main__':
+    if __name__ == "__main__":
         main()
 except Exception:
     LOGS.critical(traceback.format_exc())
