@@ -97,10 +97,10 @@ def enka_handler(event, args):
         if cards:
             ids = str()
             errors = str()
-            for names in cards.split(","):
-                info = asyncio.run(get_gi_info(query=card))
+            for name in cards.split(","):
+                info = asyncio.run(get_gi_info(query=name))
                 if not info:
-                    errors += f"{names}, "
+                    errors += f"{name}, "
                     continue
                 char_id = info.get("id")
                 ids += f"{char_id},"
