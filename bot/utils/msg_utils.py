@@ -90,14 +90,14 @@ class Message:
         #    self.client.sending.sendMessage, self.chat.id, text, msg_id
         # )
         response = self.client.sending.sendMessage(self.chat.id, text, msg_id)
-        print(response)
-        self.id = response.get("idMessage")
+        print(response.data)
+        self.id = response.data.get("idMessage")
         self.text = text
         self.user.id = self.w_id
         self.user.name = None
         return self
 
-    async def reply_file(file, file_name, caption=None, quote=True):
+    async def reply_file(self, file, file_name, caption=None, quote=True):
         msg_id = self.id if quote else None
         response = await sync_to_async(
             self.client.sending.sendFileByUpload,
@@ -107,7 +107,7 @@ class Message:
             caption,
             msg_id,
         )
-        self.id = response.get("idMessage")
+        self.id = response.data.get("idMessage")
         self.text = text
         self.user.id = self.w_id
         self.user.name = None
