@@ -61,9 +61,9 @@ class Message:
             self.name = body.get("senderData").get("chatName")
 
     def construct(self, body):
-        self.chat = Chat()
+        self.chat = self.Chat()
         self.chat.construct(body)
-        self.user = User()
+        self.user = self.User()
         self.user.construct(body)
 
         # To do support other message types
