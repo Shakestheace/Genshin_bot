@@ -68,7 +68,7 @@ def enka_handler(event, args):
             profile.card.save(path)
             return event.reply_file(path, file_name, f"*{caption}*")
         if card:
-            info = asyncio.run(get_gi_info(card))
+            info = asyncio.run(get_gi_info(query=card))
             if not info:
                 return event.reply(
                     f"*Character not found.*\nYou searched for {card}.\nNot what you searched for?\nTry again with double quotes"
