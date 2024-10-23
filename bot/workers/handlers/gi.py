@@ -61,7 +61,7 @@ async def enka_handler(event, args):
             caption = f"{profile.player.name}'s profile"
             file_name = caption + ".png"
             path = "enka/" + file_name
-            profile.card.save()
+            profile.card.save(path)
             return await event.reply_file(path, file_name, f"*{caption}*")
         if card:
             info = await get_gi_info(card)
