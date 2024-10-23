@@ -143,7 +143,7 @@ def event_handler(
     default_args: str = False,
     use_default_args=False,
 ):
-    etext = event.text.split(maxsplit=1)[1]
+    etext = event.text.split(maxsplit=1)[1] if event.text else event.short_text
     args = (
         etext.split(split_args, maxsplit=1)[1].strip()
         if len(etext.split()) > 1
