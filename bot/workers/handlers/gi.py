@@ -150,5 +150,5 @@ def send_multi_cards(event, results, profile):
         path = "enka/" + file_name
         card.card.save(path)
         event.reply_file(path, file_name, f"*{caption}*")
+        time.sleep(10)
         s_remove(path)
-        time.sleep(1)
