@@ -1,5 +1,6 @@
 import io
 import sys
+import time
 import traceback
 
 from bot import log_file_name

@@ -129,7 +129,7 @@ def enka_handler(event, args):
 
 
 def send_multi_cards(event, results, profile):
-    for card in result.card:
+    for card in results.card:
         caption = f"{profile.player.name}'s current {card.name} build"
         file_name = caption + ".png"
         path = "enka/" + file_name
