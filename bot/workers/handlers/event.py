@@ -38,7 +38,11 @@ def incoming_msg_handler(event):
                 return
 
         cp = conf.CMD_PREFIX
-        text = (event.text.split(maxsplit=1)[1]).strip() if event.text else event.short_text
+        text = (
+            (event.text.split(maxsplit=1)[1]).strip()
+            if event.text
+            else event.short_text
+        )
         command, arg = text.split(maxsplit=1) if len(text.split()) > 1 else (text, None)
         command = command.strip()
         if command.casefold() == f"{cp}enka":

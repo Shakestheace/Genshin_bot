@@ -2,8 +2,7 @@ import asyncio
 
 from bot.utils.gi_utils import enka_update, get_enka_card, get_enka_profile, get_gi_info
 from bot.utils.log_utils import log
-from bot.utils.msg_utils import get_args
-from bot.utils.msg_utils import s_remove
+from bot.utils.msg_utils import get_args, s_remove
 
 
 def enka_handler(event, args):
