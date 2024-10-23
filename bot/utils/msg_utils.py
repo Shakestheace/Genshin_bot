@@ -90,6 +90,7 @@ class Message:
         #    self.client.sending.sendMessage, self.chat.id, text, msg_id
         # )
         response = self.client.sending.sendMessage(self.chat.id, text, msg_id)
+        print(response)
         self.id = response.get("idMessage")
         self.text = text
         self.user.id = self.w_id
