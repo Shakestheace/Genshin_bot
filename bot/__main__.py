@@ -32,7 +32,7 @@ async def main():
         
         _bot.greenAPI.webhooks.startReceivingNotifications(bg_handler)
     except Exception:
-    LOGS.info(traceback.format_exc())
+        LOGS.info(traceback.format_exc())
 
 
 

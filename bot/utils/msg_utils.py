@@ -100,7 +100,7 @@ def construct_event(body):
     return msg.construct(body)
 
 def mentioned(event):
-    return event.text.startswith((f"@{event.w_id.split('@'))[0]}")
+    return event.text.startswith(f"@{(event.w_id.split('@'))[0]}")
 
 def chat_is_allowed(user):
     return user in conf.ALLOWED_CHATS if conf.ALLOWED_CHATS else True

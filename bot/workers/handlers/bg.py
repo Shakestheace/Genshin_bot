@@ -23,7 +23,7 @@ async def bg_task(func, *args, **kwargs):
         
 async def onrestart():
     if len(sys.argv) == 3:
-        async.create_task(restart_handler())
+        asyncio.create_task(restart_handler())
 
 async def restart_handler():
     try:

@@ -33,7 +33,8 @@ async def get_enka_profile(uid, card=False, template=1):
         error = True
         result = e
         await logger (Exception)
-    finally return result, error
+    finally:
+        return result, error
 
 async def get_enka_card(uid, char_id, akasha=True, huid=False, template=1):
     error=False 
@@ -47,4 +48,5 @@ async def get_enka_card(uid, char_id, akasha=True, huid=False, template=1):
         error = True
         result = e
         await logger (Exception)
-    finally return result, error
+    finally:
+        return result, error
