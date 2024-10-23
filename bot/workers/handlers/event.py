@@ -27,7 +27,7 @@ async def incoming_msg_handler(event):
             return
         if not chat_is_allowed(event.chat.id):
             return
-        cp = conf.CMD.PREFIX
+        cp = conf.CMD_PREFIX
         text = event.text.split(maxsplit=1)[1]
         command, arg = text.split(maxsplit=1)
         if command.casefold() == f"{cp}enka":
