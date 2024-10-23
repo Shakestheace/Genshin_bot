@@ -106,7 +106,7 @@ def chat_is_allowed(user):
     return user in conf.ALLOWED_CHATS if conf.ALLOWED_CHATS else True
 
 def user_is_owner(user):
-    return user.split("@")[0] in conf.OWNER else False
+    return user.split("@")[0] in conf.OWNER if conf.OWNER else False
 
 async def event_handler(
     event,
