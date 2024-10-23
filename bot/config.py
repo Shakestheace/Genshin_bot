@@ -25,9 +25,7 @@ class Config:
             )
             self.ALLOWED_CHATS = config("ALLOWED_CHATS", default="")
             self.API_KEY = config("API_KEY", default="")
-            self.API_HASH = config(
-                "API_HASH", default=""
-            )
+            self.API_HASH = config("API_HASH", default="")
             self.PH_NUMBER = config("PH_NUMBER", default="")
 
             self.CMD_PREFIX = config("CMD_PREFIX", default="")
