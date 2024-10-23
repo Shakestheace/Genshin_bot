@@ -68,6 +68,8 @@ class Message:
         self.id = body.get("idMessage")
         self.type = body.get("messageData").get("typeMessage")
         self.ext_msg = body.get("messageData").get("extendedTextMessageData")
+        self.text_msg = body.get("messageData").get("textMessageData")
+        self.short_text = self.text_msg.get("textMessage") if self.text_msg else None
         self.text = self.ext_msg.get("text") if self.ext_msg else None
         self.w_id = body.get("instanceData").get("wid")
         # To do expand quoted

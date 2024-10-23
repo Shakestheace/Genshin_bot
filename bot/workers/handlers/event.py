@@ -5,6 +5,7 @@ from bot.utils.msg_utils import (
     construct_event,
     event_handler,
     mentioned,
+    user_is_owner,
 )
 
 from .dev import eval_handler, getlogs
@@ -26,15 +27,18 @@ def handler(type_webhook: str, body: dict) -> None:
 
 def incoming_msg_handler(event):
     try:
-        print(event.text)
-        if not event.text:
+        if not (event.text or event.short_text):
             return
-        if not mentioned(event):
+        if event.text and not mentioned(event):
             return
-        if not chat_is_allowed(event.chat.id):
+        if event.text and not chat_is_allowed(event.chat.id):
             return
+        if event.short_text:
+            if not user_is_owner(event.chat.id):
+                return
+
         cp = conf.CMD_PREFIX
-        text = event.text.split(maxsplit=1)[1]
+        text = event.text.split(maxsplit=1)[1] if event.text else event.short_text
         command, arg = text.split(maxsplit=1) if len(text.split()) > 1 else (text, None)
         if command.casefold() == f"{cp}enka":
             return event_handler(event, enka_handler, require_args=True)
