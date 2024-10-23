@@ -51,13 +51,14 @@ def enka_handler(event, args):
         )
         card = arg.c or arg.card
         cards = arg.cs or arg.cards
+        dump = arg.d or arg.dump
         prof = arg.p or arg.profile
         akasha = arg.no_top
         if arg.update:
             enka_update()
-            if not (card or cards or prof):
+            if not (card or cards or dump or prof):
                 return event.reply("Updated enka assets.")
-        if not (card or cards or prof):
+        if not (card or cards or dump or prof):
             return event.reply(f"```{enka_handler.__doc__}```")
         if arg.t not in ("1", "2"):
             arg.t = 1
