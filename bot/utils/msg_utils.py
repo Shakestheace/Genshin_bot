@@ -153,4 +153,4 @@ async def event_handler(
         if disable_help:
             return
         return await event.reply(f"```{function.__doc__}```")
-    await function(event, args, client)
+    await function(event, args)
