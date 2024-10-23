@@ -1,11 +1,11 @@
 import asyncio
-import traceback
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 
 from .log_utils import logger
 
 THREADPOOL = ThreadPoolExecutor(max_workers=1000)
+
 
 async def sync_to_async(func, *args, wait=True, **kwargs):
     try:
@@ -15,6 +15,7 @@ async def sync_to_async(func, *args, wait=True, **kwargs):
         return await future if wait else future
     except Exception:
         logger(Exception)
+
 
 async def split_text(text: str, split="\n", pre=False):
     current_list = ""

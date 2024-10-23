@@ -15,10 +15,9 @@
 
 import asyncio
 
-from . import LOGS, _bot, conf, traceback
-
 from bot.workers.handlers.bg import bg_handler, onrestart
 
+from . import LOGS, _bot, traceback
 
 LOGS.info(f"Bot version: {_bot.version}")
 LOGS.info("Starting...")
@@ -29,11 +28,10 @@ LOGS.info("Starting...")
 
 async def main():
     try:
-        
+
         _bot.greenAPI.webhooks.startReceivingNotifications(bg_handler)
     except Exception:
         LOGS.info(traceback.format_exc())
-
 
 
 ########### Start ############

@@ -1,6 +1,6 @@
 import traceback
 
-from bot import LOGS, conf
+from bot import LOGS
 
 
 def log(Exception: Exception = None, e: str = None, critical=False):

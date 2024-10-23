@@ -1,10 +1,12 @@
 import argparse
 import re
+
 from bot.config import _bot, conf
 from bot.others.exceptions import ArgumentParserError
-from .bot_utils import sync_to_async
-# from .log_utils import log, logger
 
+from .bot_utils import sync_to_async
+
+# from .log_utils import log, logger
 
 
 class ThrowingArgumentParser(argparse.ArgumentParser):
@@ -31,6 +33,7 @@ def get_args(*args, to_parse: str, get_unknown=False):
         return flag, unknown
     return flag
 
+
 class Message:
     def __init__(self):
         self.client = _bot.greenAPI
@@ -38,38 +41,41 @@ class Message:
 
     def __str__(self):
         return self.text
-    
+
     class User:
         def __init__(self):
             self.id = None
             self.name = None
+
         def construct(self, body):
-            self.id = body.get("senderData").get('sender')
-            self.name = body.get("senderData").get('senderName')
+            self.id = body.get("senderData").get("sender")
+            self.name = body.get("senderData").get("senderName")
 
     class Chat:
         def __init__(self):
             self.id = None
             self.name = None
+
         def construct(self, body):
-            self.id = body.get("senderData").get('chatId')
-            self.name = body.get("senderData").get('chatName')
+            self.id = body.get("senderData").get("chatId")
+            self.name = body.get("senderData").get("chatName")
 
     def construct(self, body):
         self.chat = Chat()
         self.chat.construct(body)
         self.user = User()
         self.user.construct(body)
-        
-        #To do support other message types 
+
+        # To do support other message types
         self.id = body.get("idMessage")
         self.type = body.get("messageData").get("typeMessage")
         self.ext_msg = body.get("messageData").get("extendedTextMessageData")
         self.text = self.ext_msg.get("text") if self.ext_msg else None
         self.w_id = body.get("instanceData").get("wid")
-        #To do expand quoted
+        # To do expand quoted
         self.quoted = body.get("messageData").get("quotedMessage")
         self.constructed = True
+
     async def reply(self, text=None, file=None, file_name=None, quote=True):
         if not constructed:
             raise Exception("Method not ready.")
@@ -78,35 +84,48 @@ class Message:
         if not text:
             raise Exception("Specify a text to reply with.")
         msg_id = self.id if quote else None
-        response = await sync_to_async(self.client.sending.sendMessage, self.chat.id, text,
-        msg_id)
+        response = await sync_to_async(
+            self.client.sending.sendMessage, self.chat.id, text, msg_id
+        )
         self.id = response.get("idMessage")
         self.text = text
         self.user.id = self.w_id
         self.user.name = None
         return self
+
     async def reply_file(file, file_name, caption=None, quote=True):
         msg_id = self.id if quote else None
-        response = await sync_to_async(self.client.sending.sendFileByUpload, self.chat.id, file, file_name, caption, msg_id,)
+        response = await sync_to_async(
+            self.client.sending.sendFileByUpload,
+            self.chat.id,
+            file,
+            file_name,
+            caption,
+            msg_id,
+        )
         self.id = response.get("idMessage")
         self.text = text
         self.user.id = self.w_id
         self.user.name = None
-        return self 
-        
+        return self
+
 
 def construct_event(body):
     msg = Message()
     return msg.construct(body)
 
+
 def mentioned(event):
     return event.text.startswith(f"@{(event.w_id.split('@'))[0]}")
+
 
 def chat_is_allowed(user):
     return user in conf.ALLOWED_CHATS if conf.ALLOWED_CHATS else True
 
+
 def user_is_owner(user):
     return user.split("@")[0] in conf.OWNER if conf.OWNER else False
+
 
 async def event_handler(
     event,

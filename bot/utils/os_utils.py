@@ -5,13 +5,14 @@ from pathlib import Path
 from subprocess import run as bashrun
 
 from bot import version_file
-from .log_utils import logger
 
+from .log_utils import logger
 
 if not os.path.isdir("downloads/"):
     os.mkdir("downloads/")
 if not os.path.isdir("enka/"):
     os.mkdir("enka/")
+
 
 async def qclean():
     try:
@@ -19,9 +20,11 @@ async def qclean():
     except Exception:
         pass
 
+
 async def re_x(i, msg):
     await qclean()
     os.execl(sys.executable, sys.executable, "-m", "bot", i, msg)
+
 
 async def updater(msg=None):
     try:
@@ -48,6 +51,7 @@ async def updater(msg=None):
     except Exception:
         await logger(Exception)
 
+
 def s_remove(*filenames, folders=False):
     """Deletes a single or tuple of files silently and return no errors if not found"""
     if folders:
@@ -62,6 +66,7 @@ def s_remove(*filenames, folders=False):
             os.remove(filename)
         except OSError:
             pass
+
 
 def read_n_to_last_line(filename, n=1):
     """Returns the nth before last line of a file (n=1 gives last line)"""

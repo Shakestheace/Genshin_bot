@@ -1,14 +1,13 @@
 import asyncio
-import html
 import io
 import sys
 import traceback
 
 from bot import log_file_name
-from bot.config import _bot
 from bot.utils.bot_utils import split_text
 from bot.utils.msg_utils import get_args, user_is_owner
-from bot.utils.os_utils import read_n_to_last_line, s_remove
+from bot.utils.os_utils import read_n_to_last_line
+
 
 async def eval_handler(event, cmd):
     """
@@ -22,7 +21,7 @@ async def eval_handler(event, cmd):
     """
     if not user_is_owner(event.user.id):
         return
-    #msg = await event.reply("Processing ...")
+    # msg = await event.reply("Processing ...")
     old_stderr = sys.stderr
     old_stdout = sys.stdout
     redirected_output = sys.stdout = io.StringIO()
@@ -55,7 +54,9 @@ async def eval_handler(event, cmd):
                 caption=cmd,
             )
     else:
-        final_output = "*Python3:*\n```{}```\n\n*Output:*\n```{}```\n".format(cmd, evaluation)
+        final_output = "*Python3:*\n```{}```\n\n*Output:*\n```{}```\n".format(
+            cmd, evaluation
+        )
         await event(final_output)
 
 

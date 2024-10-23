@@ -1,13 +1,13 @@
+from bot.config import _bot
 from bot.utils.log_utils import logger
 from bot.utils.msg_utils import user_is_owner
 from bot.utils.os_utils import re_x, updater
 
-from bot.config import _bot
 
 async def restart_handler(event, args):
     """Restarts bot. (To avoid issues use /update instead.)"""
     if not user_is_owner(event.user.id):
-        return 
+        return
     try:
         rst = await event.reply("*Restarting Please Wait…*")
         message = str(rst.chat.id) + ":" + str(rst.id)
@@ -15,6 +15,7 @@ async def restart_handler(event, args):
     except Exception:
         await event.reply("An Error Occurred")
         await logger(Exception)
+
 
 async def update_handler(event, args):
     """Fetches latest update for bot"""
@@ -27,12 +28,13 @@ async def update_handler(event, args):
     except Exception:
         await logger(Exception)
 
+
 async def pause_handler(event, args):
     """
     Pauses bot/ bot ignores Non-owner queries
     Arguments:
-        -: on/enable <str> pauses bot 
-        -: off/disable <str> unpauses bot 
+        -: on/enable <str> pauses bot
+        -: off/disable <str> unpauses bot
         -: no argument <str> checks state
     """
     try:

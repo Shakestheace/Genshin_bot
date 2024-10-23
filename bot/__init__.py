@@ -24,7 +24,6 @@ from whatsapp_api_client_python import API
 
 from .config import _bot, conf
 
-
 log_file_name = "Logs.txt"
 version_file = "version.txt"
 

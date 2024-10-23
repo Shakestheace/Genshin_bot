@@ -34,9 +34,12 @@ class Config:
             self.DATABASE_URL = config("DATABASE_URL", default=None)
             self.DBNAME = config("DBNAME", default="ENC")
             self.DYNO = config("DYNO", default=None)
-            
+
             self.GROUP = config("LOG_GROUP", default=0, cast=int)
-            self.OWNER = config("OWNER", default="",)
+            self.OWNER = config(
+                "OWNER",
+                default="",
+            )
         except Exception:
             print("Environment vars Missing; or")
             print("Something went wrong:")
@@ -50,8 +53,6 @@ class Runtime_Config:
         self.offline = False
         self.paused = False
         self.version = None
-        
-        
 
 
 conf = Config()
