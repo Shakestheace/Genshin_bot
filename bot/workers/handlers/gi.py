@@ -111,8 +111,9 @@ def enka_handler(event, args):
             errors = errors.strip(", ")
             result, error = asyncio.run(
                 get_enka_card(
-                    args, ids, akasha=akasha, huid=arg.hide_uid, template=arg.t)
+                    args, ids, akasha=akasha, huid=arg.hide_uid, template=arg.t
                 )
+            )
             if error:
                 return
 
@@ -125,6 +126,7 @@ def enka_handler(event, args):
     finally:
         if error:
             return event.reply(f"*Error:*\n{error}")
+
 
 def send_multi_cards(event, results, profile):
     for card in result.card:
