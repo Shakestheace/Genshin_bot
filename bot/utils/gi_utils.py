@@ -11,7 +11,7 @@ uri = "https://genshin-db-api.vercel.app/api/v5/{}?query={}&dumpResult=true"
 async def get_gi_info(folder="characters", query="chiori", direct=False):
     url = uri.format(folder, query)
     async with aiohttp.ClientSession() as requests:
-        result = await requests.get(url)
+        result = await requests.post(url)
         if direct:
             return await result.json()
         info = (await result.json()).get("result")
