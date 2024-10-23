@@ -41,6 +41,8 @@ def enka_handler(event, args):
             "-cs",
             "--card",
             "--cards",
+            ["-d", "store_true"],
+            ["--dump", "store_true"],
             ["-p", "store_true"],
             ["--profile", "store_true"],
             "-t",
@@ -98,17 +100,18 @@ def enka_handler(event, args):
             ids = str()
             errors = str()
             for name in cards.split(","):
+                name = name.strip()
                 info = asyncio.run(get_gi_info(query=name))
                 if not info:
                     errors += f"{name}, "
                     continue
                 char_id = info.get("id")
                 ids += f"{char_id},"
+            errors = errors.strip(", ")
             error_txt = f"*Character(s) not found.*\nYou searched for {errors}.\nNot what you searched for?\nTry again with double quotes"
             if not ids:
                 return event.reply(error_txt)
             ids = ids.strip(",")
-            errors = errors.strip(", ")
             result, error = asyncio.run(
                 get_enka_card(
                     args, ids, akasha=akasha, huid=arg.hide_uid, template=arg.t
@@ -120,6 +123,15 @@ def enka_handler(event, args):
             if errors:
                 event.reply(error_txt)
                 time.sleep(1)
+            return send_multi_cards(event, result, profile)
+        if dump:
+            result, error = asyncio.run(
+                get_enka_card(
+                    args, None, akasha=akasha, huid=arg.hide_uid, template=arg.t
+                )
+            )
+            if error:
+                return
             return send_multi_cards(event, result, profile)
     except Exception:
         log(Exception)
