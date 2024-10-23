@@ -65,7 +65,7 @@ async def aexec(code, event):
     return await locals()["__aexec"](event)
 
 
-async def getlogs(event, args, client):
+async def getlogs(event, args):
     """
     Upload bots logs in txt format.
     Or as a message if '-t' *Number is used
