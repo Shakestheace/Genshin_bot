@@ -10,7 +10,8 @@ from .event import handler
 
 def bg_handler(*args, **kwargs):
     try:
-        t = threading.Thread(target=lambda: handler(*args, **kwargs))
+        t = threading.Thread(
+            target=lambda: handler( *args, **kwargs))
         t.start()
     except Exception:
         log(Exception, critical=True)

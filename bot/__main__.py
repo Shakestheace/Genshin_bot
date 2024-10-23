@@ -29,7 +29,7 @@ def main():
     try:
 
         onrestart()
-        _bot.greenAPI.webhooks_.startReceivingNotifications(bg_handler)
+        _bot.greenAPI.webhooks.startReceivingNotifications(bg_handler)
     except Exception:
         LOGS.info(traceback.format_exc())
 
