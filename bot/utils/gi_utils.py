@@ -22,6 +22,7 @@ async def enka_update():
 
 async def get_enka_profile(uid, card=False, template=1):
     error = False
+    result = None
     try:
         async with encbanner.ENC(uid=uid) as encard:
             result = await encard.profile(card=card, teamplate=template)
@@ -38,6 +39,7 @@ async def get_enka_profile(uid, card=False, template=1):
 
 async def get_enka_card(uid, char_id, akasha=True, huid=False, template=1):
     error = False
+    result = None
     try:
         async with encbanner.ENC(
             uid=uid, character_id=str(char_id), hide_uid=huid
