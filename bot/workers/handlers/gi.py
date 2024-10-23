@@ -106,7 +106,7 @@ def enka_handler(event, args):
                 ids += f"{char_id},"
             error_txt = f"*Character(s) not found.*\nYou searched for {errors}.\nNot what you searched for?\nTry again with double quotes"
             if not ids:
-                return await event.reply(error_txt)
+                return event.reply(error_txt)
             ids = ids.strip(",")
             errors = errors.strip(", ")
             result, error = asyncio.run(
