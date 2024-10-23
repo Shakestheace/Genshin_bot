@@ -9,7 +9,7 @@ ENV TZ=Africa/Lagos
 ENV TERM=xterm
 
 # Install Dependencies
-RUN dnf -qq -y update && dnf -qq -y install git bash wget curl pv jq python3-pip psmisc procps-ng && python3 -m pip install --upgrade pip setuptools
+RUN dnf -qq -y update && dnf -qq -y install git bash wget curl python3-pip psmisc procps-ng && python3 -m pip install --upgrade pip setuptools
 
 # Copy files from repo to home directory
 COPY . .

@@ -1,5 +1,5 @@
 #    This file is part of the Encoder distribution.
-#    Copyright (c) 2023 Danish_00, Nubuki-all
+#    Copyright (c) 2024 Nubuki-all
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -11,7 +11,7 @@
 #    General Public License for more details.
 #
 # License can be found in
-# <https://github.com/Nubuki-all/Enc/blob/main/License> .
+# <https://github.com/Nubuki-all/Genshin_bot/blob/main/License> .
 
 import asyncio
 
