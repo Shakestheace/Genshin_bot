@@ -1,3 +1,5 @@
+import time
+
 from bot.config import _bot
 from bot.utils.log_utils import log
 from bot.utils.msg_utils import user_is_owner
@@ -11,6 +13,7 @@ def restart_handler(event, args):
     try:
         rst = event.reply("*Restarting Please Wait…*")
         message = str(rst.chat.id) + ":" + str(rst.id)
+        time.sleep(5)
         re_x("restart", message)
     except Exception:
         event.reply("An Error Occurred")
@@ -24,6 +27,7 @@ def update_handler(event, args):
             return
         upt_mess = "Updating…"
         reply = event.reply(f"`{upt_mess}`")
+        time.sleep(5)
         updater(reply)
     except Exception:
         log(Exception)
