@@ -95,6 +95,9 @@ def enka_handler(event, args):
             caption = f"{profile.player.name}'s current {info.get('name')} build"
             file_name = caption + ".png"
             path = "enka/" + file_name
+            if not result.card:
+                error = f"*{card} not found in showcase!*"
+                return
             result.card[0].card.save(path)
             event.reply_file(path, file_name, f"*{caption}*")
             return s_remove(path)
