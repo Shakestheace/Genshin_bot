@@ -126,6 +126,7 @@ class Message:
     def reply_link(self, link, file_name, caption=None, quote=True):
         msg_id = self.id if quote else None
 
+        link = self.client.sending.uploadFile(link)
         response = self.client.sending.sendFileByUrl(
             self.chat.id, link, file_name, caption, msg_id
         )
