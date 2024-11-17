@@ -28,23 +28,15 @@ def handler(type_webhook: str, body: dict) -> None:
 
 def incoming_msg_handler(event):
     try:
-        if not (event.text or event.short_text):
+        if not event.text:
             return
-        if event.text and not mentioned(event):
+        if (event.ext_msg and not event.mentioned) and conf.IGNORE_UNMENTIONED:
             return
-        if event.text and not chat_is_allowed(event.chat.id):
+        if not (chat_is_allowed(event.chat.id) or user_is_owner(event.user.id)):
             return
-        if event.short_text:
-            if not user_is_owner(event.chat.id):
-                return
 
         cp = conf.CMD_PREFIX
-        text = (
-            (event.text.split(maxsplit=1)[1]).strip()
-            if event.text
-            else event.short_text
-        )
-        command, arg = text.split(maxsplit=1) if len(text.split()) > 1 else (text, None)
+        command, arg = event.text.split(maxsplit=1) if len(event.text.split()) > 1 else (event.text, None)
         command = command.strip()
         if command.casefold() == f"{cp}enka":
             return event_handler(event, enka_handler, require_args=True)

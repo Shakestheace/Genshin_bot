@@ -24,7 +24,7 @@ def getmeme(event, args):
             author = result.get("author")
             pl = result.get("postLink")
             sb = result.get("subreddit")
-            caption = f"*{title}*\n{pl}\n\nBy u/{author} in r/{sb}"
+            caption = f"*{title.strip()}*\n{pl}\n\nBy u/{author} in r/{sb}"
             url = result.get("url")
             filename = f"{_id}.{url.split('.')[-1]}"
             event.reply(caption, link=url, file_name=filename)

@@ -72,6 +72,11 @@ class Message:
         self.short_text = self.text_msg.get("textMessage") if self.text_msg else None
         self.text = self.ext_msg.get("text") if self.ext_msg else None
         self.w_id = body.get("instanceData").get("wid")
+        mention_str = f"@{(self.w_id.split('@'))[0]}"
+        self.mentioned = self.text.startswith(mention_str) if self.text else False
+        if self.mentioned:
+            self.text = (self.text.split(maxsplit=1)[1]).strip()
+        self.text = self.text or self.short_text
         # To do expand quoted
         self.quoted = body.get("messageData").get("quotedMessage")
         self.constructed = True
@@ -157,10 +162,10 @@ def event_handler(
     default_args: str = False,
     use_default_args=False,
 ):
-    etext = event.text.split(maxsplit=1)[1] if event.text else event.short_text
+    # etext = event.text or event.short_text
     args = (
-        etext.split(split_args, maxsplit=1)[1].strip()
-        if len(etext.split()) > 1
+        event.text.split(split_args, maxsplit=1)[1].strip()
+        if len(event.text.split()) > 1
         else None
     )
     args = default_args if use_default_args and default_args is not False else args

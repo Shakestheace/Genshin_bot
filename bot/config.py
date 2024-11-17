@@ -34,6 +34,9 @@ class Config:
             self.DYNO = config("DYNO", default=None)
 
             self.GROUP = config("LOG_GROUP", default=0, cast=int)
+            self.IGNORE_UNMENTIONED = config(
+                "IGNORE_UNMENTIONED", default=False, cast=bool
+            )
             self.OWNER = config(
                 "OWNER",
                 default="",
