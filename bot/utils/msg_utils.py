@@ -110,16 +110,9 @@ class Message:
 
     def reply_file(self, file, file_name, caption=None, quote=True):
         msg_id = self.id if quote else None
-        # response = await sync_to_async(
-        #    self.client.sending.sendFileByUpload,
-        #    self.chat.id,
-        #    file,
-        #    file_name,
-        #    caption,
-        #    msg_id,
-        # )
-        response = self.client.sending.sendFileByUpload(
-            self.chat.id, file, file_name, caption, msg_id
+        link = self.upload_file(file)
+        response = self.client.sending.sendFileByUrl(
+            self.chat.id, link, file_name, caption, msg_id
         )
         self.id = response.data.get("idMessage")
         self.text = caption
@@ -134,8 +127,7 @@ class Message:
             file_name, "wb"
         ) as out_file:
             shutil.copyfileobj(response, out_file)
-        response = self.client.sending.uploadFile(file_name)
-        link = response.data.get("urlFile")
+        link = self.upload_file(file_name)
         response = self.client.sending.sendFileByUrl(
             self.chat.id, link, file_name, caption, msg_id
         )
@@ -146,6 +138,9 @@ class Message:
         self.user.name = None
         return self
 
+    def upload_file(self, file):
+        response = self.client.sending.uploadFile(file)
+        return response.data.get("urlFile")
 
 def construct_event(body):
     msg = Message()
