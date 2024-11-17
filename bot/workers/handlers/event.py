@@ -4,7 +4,6 @@ from bot.utils.msg_utils import (
     chat_is_allowed,
     construct_event,
     event_handler,
-    mentioned,
     user_is_owner,
 )
 
@@ -36,7 +35,11 @@ def incoming_msg_handler(event):
             return
 
         cp = conf.CMD_PREFIX
-        command, arg = event.text.split(maxsplit=1) if len(event.text.split()) > 1 else (event.text, None)
+        command, arg = (
+            event.text.split(maxsplit=1)
+            if len(event.text.split()) > 1
+            else (event.text, None)
+        )
         command = command.strip()
         if command.casefold() == f"{cp}enka":
             return event_handler(event, enka_handler, require_args=True)
