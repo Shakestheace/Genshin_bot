@@ -39,5 +39,5 @@ def split_text(text: str, split="\n", pre=False):
 
 async def get_json(link):
     async with aiohttp.ClientSession() as requests:
-        result = await requests.post(link)
+        result = await requests.get(link)
         return await result.json()
