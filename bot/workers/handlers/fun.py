@@ -1,4 +1,5 @@
 import asyncio
+import time
 
 from bot.utils.bot_utils import get_json
 from bot.utils.log_utils import log
@@ -27,6 +28,7 @@ def getmeme(event, args):
             url = result.get("url")
             filename = f"{_id}.{url.split('.')[-1]}"
             event.reply(caption, link=url, file_name=filename)
+            time.sleep(3)
     except Exception as e:
         log(Exception)
         return event.reply(f"*Error:*\n{e}")
