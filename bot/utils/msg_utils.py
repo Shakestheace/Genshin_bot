@@ -130,6 +130,7 @@ class Message:
         self.user.name = None
         return self
 
+
 def construct_event(body):
     msg = Message()
     return msg.construct(body)

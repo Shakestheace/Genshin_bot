@@ -3,16 +3,17 @@ import asyncio
 from bot.utils.bot_utils import get_json
 from bot.utils.log_utils import log
 
+
 def getmeme(event, args):
     """
-    Fetches a random meme from reddit 
+    Fetches a random meme from reddit
     Uses meme-api.com
     Arguments: (Coming soon)
     -n number of memes to fetch
-    -r specify subreddit 
+    -r specify subreddit
     -nl hide post link
     """
-    user = event.user.id
+    event.user.id
     link = "https://meme-api.com/gimme"
     try:
         if not args:

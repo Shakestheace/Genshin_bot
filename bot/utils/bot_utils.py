@@ -1,9 +1,8 @@
 import asyncio
-
-import aiohttp
-
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
+
+import aiohttp
 
 from .log_utils import logger
 
@@ -41,5 +40,4 @@ def split_text(text: str, split="\n", pre=False):
 async def get_json(link):
     async with aiohttp.ClientSession() as requests:
         result = await requests.post(link)
-            return await result.json()
-
+        return await result.json()
