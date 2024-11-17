@@ -1,4 +1,7 @@
 import asyncio
+
+import aiohttp
+
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 
@@ -33,3 +36,10 @@ def split_text(text: str, split="\n", pre=False):
     # Add the last line into list.
     message_list.append(current_list)
     return message_list
+
+
+async def get_json(link):
+    async with aiohttp.ClientSession() as requests:
+        result = await requests.post(link)
+            return await result.json()
+

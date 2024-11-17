@@ -77,11 +77,13 @@ class Message:
         self.constructed = True
         return self
 
-    def reply(self, text=None, file=None, file_name=None, quote=True):
+    def reply(self, text=None, file=None, file_name=None, link=None, quote=True):
         if not self.constructed:
             raise Exception("Method not ready.")
         if file and file_name:
             return self.reply_file(file, file_name, text, quote)
+        if link and file_name:
+            return self.reply_link(link, file_name, text, quote)
         if not text:
             raise Exception("Specify a text to reply with.")
         msg_id = self.id if quote else None
@@ -116,6 +118,17 @@ class Message:
         self.user.name = None
         return self
 
+    def reply_link(self, link, file_name, caption=None, quote=True):
+        msg_id = self.id if quote else None
+
+        response = self.client.sending.sendFileByUrl(
+            self.chat.id, link, file_name, caption, msg_id
+        )
+        self.id = response.data.get("idMessage")
+        self.text = caption
+        self.user.id = self.w_id
+        self.user.name = None
+        return self
 
 def construct_event(body):
     msg = Message()

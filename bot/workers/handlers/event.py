@@ -9,6 +9,7 @@ from bot.utils.msg_utils import (
 )
 
 from .dev import eval_handler, getlogs
+from .fun import getmeme
 from .gi import enka_handler
 from .manage import pause_handler, restart_handler, update_handler
 
@@ -52,6 +53,9 @@ def incoming_msg_handler(event):
             return event_handler(event, eval_handler, require_args=True)
         if command.casefold() == f"{cp}logs":
             return event_handler(event, getlogs)
+
+        if command.casefold() == f"{cp}meme":
+            return event_handler(event, getmeme)
 
         if command.casefold() == f"{cp}pause":
             return event_handler(event, pause_handler)
