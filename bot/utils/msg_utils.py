@@ -142,6 +142,7 @@ class Message:
         response = self.client.sending.uploadFile(file)
         return response.data.get("urlFile")
 
+
 def construct_event(body):
     msg = Message()
     return msg.construct(body)
