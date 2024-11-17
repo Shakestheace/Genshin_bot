@@ -134,7 +134,8 @@ class Message:
             file_name, "wb"
         ) as out_file:
             shutil.copyfileobj(response, out_file)
-        link = self.client.sending.uploadFile(file_name)
+        response = self.client.sending.uploadFile(file_name)
+        link = response.data.get("urlFile")
         response = self.client.sending.sendFileByUrl(
             self.chat.id, link, file_name, caption, msg_id
         )
