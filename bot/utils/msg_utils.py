@@ -1,14 +1,12 @@
 import argparse
 import re
-
-import urllib.request
 import shutil
+import urllib.request
 
 from bot.config import _bot, conf
 from bot.others.exceptions import ArgumentParserError
 
 from .os_utils import s_remove
-
 
 # from .log_utils import log, logger
 
@@ -132,7 +130,9 @@ class Message:
     def reply_link(self, link, file_name, caption=None, quote=True):
         msg_id = self.id if quote else None
 
-        with urllib.request.urlopen(link) as response, open(file_name, 'wb') as out_file:
+        with urllib.request.urlopen(link) as response, open(
+            file_name, "wb"
+        ) as out_file:
             shutil.copyfileobj(response, out_file)
         link = self.client.sending.uploadFile(file_name)
         response = self.client.sending.sendFileByUrl(
