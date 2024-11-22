@@ -156,7 +156,7 @@ def enka_handler(event, args):
                     )
                 )
                 if not arg.v2
-                else asyncio.run(get_enka_card2(args, None, huid=arg.hide_uid))
+                else asyncio.run(get_enka_card2(args, str(), huid=arg.hide_uid))
             )
             if error:
                 return
