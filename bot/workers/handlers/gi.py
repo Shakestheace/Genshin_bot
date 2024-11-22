@@ -18,6 +18,7 @@ def enka_handler(event, args):
     -cs or --cards {characters} same as -c but for multiple characters; delimited by commas
     -t <int> {template}: card generation template; currently only two templates exist; default 1
     Flags:
+    -v2: Get cards in new template 
     -d or --dump: Dump all character build from the given uid
     -p or --profile: To get player card instead
     --hide_uid: Hide uid in card
@@ -46,6 +47,7 @@ def enka_handler(event, args):
             ["--dump", "store_true"],
             ["-p", "store_true"],
             ["--profile", "store_true"],
+            ["-v2", "store_true"],
             "-t",
             to_parse=args,
             get_unknown=True,
@@ -67,15 +69,17 @@ def enka_handler(event, args):
         if error:
             return
         if prof:
-            profile, error = asyncio.run(
+            cprofile, error = asyncio.run(
                 get_enka_profile(args, card=True, template=arg.t)
+            ) if not arg.v2 else asyncio.run(
+                get_enka_profile2(args, huid=arg.hide_uid)
             )
             if error:
                 return
             caption = f"{profile.player.name}'s profile"
             file_name = caption + ".png"
             path = "enka/" + file_name
-            profile.card.save(path)
+            cprofile.card.save(path)
             event.reply_file(path, file_name, f"*{caption}*")
             return s_remove(path)
         if card:
@@ -88,6 +92,10 @@ def enka_handler(event, args):
             result, error = asyncio.run(
                 get_enka_card(
                     args, char_id, akasha=akasha, huid=arg.hide_uid, template=arg.t
+                )
+            ) if not arg.v2 else asyncio.run(
+                get_enka_card2(
+                    args, char_id, arg.hide_uid
                 )
             )
             if error:
@@ -121,6 +129,10 @@ def enka_handler(event, args):
                 get_enka_card(
                     args, ids, akasha=akasha, huid=arg.hide_uid, template=arg.t
                 )
+            ) if not arg.v2 else asyncio.run(
+                get_enka_card2(
+                    args, ids, huid=arg.hide_uid
+                )
             )
             if error:
                 return
@@ -133,6 +145,10 @@ def enka_handler(event, args):
             result, error = asyncio.run(
                 get_enka_card(
                     args, None, akasha=akasha, huid=arg.hide_uid, template=arg.t
+                )
+            ) if not arg.v2 else asyncio.run(
+                get_enka_card2(
+                    args, None, huid=arg.hide_uid
                 )
             )
             if error:
@@ -155,3 +171,7 @@ def send_multi_cards(event, results, profile):
         event.reply_file(path, file_name, f"*{caption}*")
         time.sleep(10)
         s_remove(path)
+
+
+#def weapon_handler(event, args):
+    

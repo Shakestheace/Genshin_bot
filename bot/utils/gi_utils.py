@@ -1,6 +1,7 @@
 import asyncio
 
 import aiohttp
+from encard import encard, update_namecard
 from enkacard import enc_error, encbanner
 
 from .log_utils import logger
@@ -20,6 +21,7 @@ async def get_gi_info(folder="characters", query="chiori", direct=False):
 
 def enka_update():
     asyncio.run(encbanner.update())
+    asyncio.run(update_namecard.update())
 
 
 async def get_enka_profile(uid, card=False, template=1):
@@ -54,3 +56,27 @@ async def get_enka_card(uid, char_id, akasha=True, huid=False, template=1):
         await logger(Exception)
     finally:
         return result, error
+
+async def get_enka_profile2(uid, huid=False):
+    error=result=None
+    try:
+        async with encard.ENCard(lang = "en", hide=huid) as enc:
+            result = await enc.create_profile(uid)
+    except Exception as e:
+        error = True
+        result = e
+        await logger(Exception)
+    finally:
+        return result, error
+
+async def get_enka_card2(uid, char_id, huid=False):
+    error = result = None
+    try: 
+        async with encard.ENCard(lang = "en", character_id=str(char_id), hide=huid) as enc:
+            result = await enc.create_cards(uid)
+    except Exception as e:
+        error = True
+        result = e
+        await logger(Exception)
+    finally:
+        return result, error 
