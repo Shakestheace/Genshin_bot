@@ -34,18 +34,18 @@ def getmeme(event, args):
     """
     Fetches a random meme from reddit
     Uses meme-api.com
-    Arguments: (Coming soon)
-    -n number of memes to fetch
-    -r specify subreddit
-    -nl hide post link
+
+    Arguments: 
+    subreddit - custom subreddit
     """
     event.user.id
     link = "https://meme-api.com/gimme"
     try:
-        if not args:
-            caption, url, filename = gen_meme(link)
-            event.reply(caption, link=url, file_name=filename)
-            # time.sleep(3)
+        if args:
+            link += f"/{args}" if not arg.isdigit() else str()
+        caption, url, filename = gen_meme(link)
+        event.reply(caption, link=url, file_name=filename)
+        # time.sleep(3)
     except Exception as e:
         log(Exception)
         return event.reply(f"*Error:*\n{e}")
