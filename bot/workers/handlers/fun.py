@@ -35,7 +35,7 @@ def getmeme(event, args):
     Fetches a random meme from reddit
     Uses meme-api.com
 
-    Arguments: 
+    Arguments:
     subreddit - custom subreddit
     """
     event.user.id
