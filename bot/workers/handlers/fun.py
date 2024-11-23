@@ -3,8 +3,8 @@ import asyncio
 from bot.utils.bot_utils import get_json
 from bot.utils.log_utils import log
 
-
 meme_list = []
+
 
 def gen_meme(link):
     i = 1
