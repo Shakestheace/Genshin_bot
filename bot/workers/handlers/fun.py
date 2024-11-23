@@ -42,7 +42,7 @@ def getmeme(event, args):
     link = "https://meme-api.com/gimme"
     try:
         if args:
-            link += f"/{args}" if not arg.isdigit() else str()
+            link += f"/{args}" if not args.isdigit() else str()
         caption, url, filename = gen_meme(link)
         event.reply(caption, link=url, file_name=filename)
         # time.sleep(3)
