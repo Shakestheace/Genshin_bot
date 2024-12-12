@@ -81,7 +81,7 @@ async def _(client: NewAClient, message: MessageEv):
 
 try:
     loop = asyncio.get_event_loop()
-    if bot.initialized_client:
+    if not bot.initialized_client:
         loop = run_until_complete(on_startup(client_is_ready=False))
         loop.run_until_complete(
             bot.client.PairPhone(conf.PH_NUMBER, show_push_notification=True)
