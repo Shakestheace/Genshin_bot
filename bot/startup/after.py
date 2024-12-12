@@ -38,7 +38,9 @@ async def onrestart():
         else:
             return
         chat_id, msg_id = map(str, sys.argv[2].split(":"))
-        await bot.client.edit_message(jid.build_jid(chat_id), msg_id, Message(conversation=msg))
+        await bot.client.edit_message(
+            jid.build_jid(chat_id), msg_id, Message(conversation=msg)
+        )
     except Exception:
         await logger(Exception)
 
