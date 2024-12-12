@@ -21,9 +21,12 @@ def qclean():
         pass
 
 
-def re_x(i, msg):
+def re_x(i=None, msg=None):
     qclean()
-    os.execl(sys.executable, sys.executable, "-m", "bot", i, msg)
+    if not i:
+        os.execl(sys.executable, sys.executable, "-m", "bot")
+    else:
+        os.execl(sys.executable, sys.executable, "-m", "bot", i, msg)
 
 
 def updater(msg=None):

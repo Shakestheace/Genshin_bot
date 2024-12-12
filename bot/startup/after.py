@@ -2,13 +2,14 @@ import signal
 
 import aiohttp
 
-from bot import asyncio, bot, conf, jid, sys, version_file
+from bot import asyncio, bot, con_ind, conf, jid, sys, version_file
 from bot.fun.emojis import enmoji, enmoji2
 from bot.fun.quips import enquip, enquip2
 from bot.utils.gi_utils import enka_update
 from bot.utils.local_db_utils import save_enka_db
 from bot.utils.log_utils import logger
 from bot.utils.rss_utils import scheduler
+from bot.utils.os_utils import file_exists, re_x, touch
 
 
 async def update_enka_assets():
@@ -70,7 +71,19 @@ async def on_termination(loop):
     exit()
 
 
-async def on_startup(client_is_ready=True):
+async def wait_and_restart():
+    while True:
+        try:
+            await bot.client.disconnect()
+            if not file_exists(con_ind):
+                touch(con_ind)
+            re_x()
+        except Exception:
+            pass
+        await asyncio.sleep(0.5)
+
+
+async def on_startup():
     try:
         await update_enka_assets()
         scheduler.start()
@@ -81,8 +94,6 @@ async def on_startup(client_is_ready=True):
                 getattr(signal, signame),
                 lambda: asyncio.create_task(on_termination(loop)),
             )
-        if not client_is_ready:
-            return
         if len(sys.argv) == 3:
             await onrestart()
         else:

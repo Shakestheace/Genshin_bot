@@ -17,13 +17,6 @@ async def rss_monitor():
     """
     An asynchronous function to get rss links
     """
-    if not bot.initialized_client:
-        # sudo client.is_ready checker
-        if not file_exists(con_ind):
-            return
-        else:
-            touch(con_ind)
-            bot.initialized_client = True
     if not conf.RSS_CHAT:
         log(e="RSS_CHAT not set! Shutting down rss scheduler...")
         scheduler.shutdown(wait=False)
