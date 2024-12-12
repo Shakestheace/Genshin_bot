@@ -1,44 +1,98 @@
-#    This file is part of the Encoder distribution.
-#    Copyright (c) 2024 Nubuki-all
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, version 3.
-#
-#    This program is distributed in the hope that it will be useful, but
-#    WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-#    General Public License for more details.
-#
-# License can be found in
-# <https://github.com/Nubuki-all/Genshin_bot/blob/main/License> .
+from . import ConnectedEv, LOGS, NewAClient, asyncio, bot, filters
+from .startup.after import on_startup
+from .utils.msg_utils import Event, event_handler, on_message
+from .workers.handlers.dev import bash, eval_message, get_logs
+from .workers.handlers.gi import enka_handler, weapon_handler
+from .workers.handlers.manage import (
+    pause_handler,
+    restart_handler,
+    rss_handler,
+    update_handler,
+)
+from .workers.handlers.stuff import getmeme, hello
 
 
-from bot.workers.handlers.bg import bg_handler, onrestart
+@bot.client.event(ConnectedEv)
+async def on_connected(_: NewAClient, __: ConnectedEv):
+    await on_startup()
 
-from . import LOGS, _bot, traceback
-
-LOGS.info(f"Bot version: {_bot.version}")
-LOGS.info("Starting...")
-
-
-######## Connect ########
+@bot.register("start")
+async def _(client: NewAClient, message: Event):
+    await event_handler(message, hello)
 
 
-def main():
-    try:
+@bot.register("pause")
+async def _(client: NewAClient, message: Event):
+    await event_handler(message, pause_handler)
 
-        onrestart()
-        _bot.greenAPI.webhooks.startReceivingNotifications(bg_handler)
-    except Exception:
-        LOGS.info(traceback.format_exc())
+
+@bot.register("logs")
+async def _(client: NewAClient, message: Event):
+    await event_handler(message, get_logs)
+
+
+@bot.register("eval")
+async def _(client: NewAClient, message: Event):
+    await event_handler(message, eval_message, require_args=True)
+
+
+@bot.register("bash")
+async def _(client: NewAClient, message: Event):
+    await event_handler(message, bash, require_args=True)
+
+
+@bot.register("enka")
+async def _(client: NewAClient, message: Event):
+    await event_handler(message, enka_handler, require_args=True)
+
+
+@bot.register("weapon")
+async def _(client: NewAClient, message: Event):
+    await event_handler(message, weapon_handler, require_args=True)
+
+
+@bot.register("meme")
+async def _(client: NewAClient, message: Event):
+    await event_handler(message, getmeme)
+
+
+@bot.register("rss")
+async def _(client: NewAClient, message: Event):
+    await event_handler(message, rss_handler, require_args=True)
+
+
+@bot.register("update")
+async def _(client: NewAClient, message: Event):
+    await event_handler(message, update_handler)
+
+
+@bot.register("restart")
+async def _(client: NewAClient, message: Event):
+    await event_handler(message, restart_handler)
+
+
+@bot.client.event(MessageEv)
+async def _(client: NewAClient, message: MessageEv):
+    await on_message(client, message)
 
 
 ########### Start ############
 
 try:
-    if __name__ == "__main__":
-        main()
+    loop = asyncio.get_event_loop()
+    if bot.initialized_client:
+        loop = run_until_complete(on_startup(client_is_ready=False))
+        loop.run_until_complete( 
+            bot.client.PairPhone(
+                conf.PH_NUMBER,
+                show_push_notification=True
+            )
+        )
+    else:
+        loop.run_until_complete( 
+            bot.client.connect()
+        )
 except Exception:
     LOGS.critical(traceback.format_exc())
+    LOGS.critical("Cannot recover from error, exiting…")
     exit()

@@ -1,7 +1,13 @@
 aiohttp
+aiohttp_retry
+apscheduler
+beautifulsoup4
+feedparser
+html_telegraph_poster
+lxml[html_clean]
+neonize
 pymongo
 python-decouple
-whatsapp_api_client_python
 git+https://github.com/Nubuki-all/EnkaCard
 git+https://github.com/Nubuki-all/ENCard
 #Snyk pins 

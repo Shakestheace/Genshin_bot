@@ -1,27 +1,40 @@
-import asyncio
-
-import aiohttp
+from aiohttp_retry import RandomRetry, RetryClient
 from encard import encard, update_namecard
 from enkacard import enc_error, encbanner
+
+from bot import bot
 
 from .log_utils import logger
 
 uri = "https://genshin-db-api.vercel.app/api/v5/{}?query={}&dumpResult=true"
+uri2 = (
+    "https://genshin-db-api.vercel.app/api/v5/stats?folder={}&query={}&dumpResult=true"
+)
 
 
-async def get_gi_info(folder="characters", query="chiori", direct=False):
-    url = uri.format(folder, query)
-    async with aiohttp.ClientSession() as requests:
-        result = await requests.post(url)
-        if direct:
-            return await result.json()
-        info = (await result.json()).get("result")
+async def get_gi_info(folder="characters", query="qiqi", direct=False, stats=False):
+    url = uri.format(folder, query) if not stats else uri2.format(folder, query)
+    field = "stats" if stats else "result"
+    retry_options = RandomRetry(attempts=10)
+    retry_requests = RetryClient(bot.requests)
+    result = await retry_requests.post(url, retry_options=retry_options)
+    if direct:
+        return await result.json()
+    info = (await result.json()).get(field)
     return info
 
 
-def enka_update():
-    asyncio.run(encbanner.update())
-    asyncio.run(update_namecard.update())
+async def async_dl(url):
+    retry_options = RandomRetry(attempts=10)
+    retry_requests = RetryClient(bot.requests)
+    result = await retry_requests.get(url, retry_options=retry_options)
+    assert result.status == 200
+    return result
+
+
+async def enka_update():
+    await encbanner.update()
+    await update_namecard.update()
 
 
 async def get_enka_profile(uid, card=False, template=1):

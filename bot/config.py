@@ -24,22 +24,32 @@ class Config:
                 "ALWAYS_DEPLOY_LATEST", default=False, cast=bool
             )
             self.ALLOWED_CHATS = config("ALLOWED_CHATS", default="")
-            self.API_KEY = config("API_KEY", default="")
-            self.API_HASH = config("API_HASH", default="")
+            self.BANNED = config(
+                "BANNED",
+                default=str(),
+            )
             self.PH_NUMBER = config("PH_NUMBER", default="")
 
             self.CMD_PREFIX = config("CMD_PREFIX", default="")
             self.DATABASE_URL = config("DATABASE_URL", default=None)
             self.DBNAME = config("DBNAME", default="ENC")
+            self.DEBUG = config("DEBUG", default=False, cast=bool)
+            self.DEV = config("DEV", default=0, cast=str)
             self.DYNO = config("DYNO", default=None)
 
             self.GROUP = config("LOG_GROUP", default=0, cast=int)
-            self.IGNORE_UNMENTIONED = config(
-                "IGNORE_UNMENTIONED", default=False, cast=bool
+            self.IGNORE_PM = config("IGNORE_PM", default=True, cast=bool)
+            self.RSS_CHAT = config(
+                "RSS_CHAT",
+                default=str(),
             )
+            self.RSS_DELAY = config("RSS_DELAY", default=60, cast=int)
             self.OWNER = config(
                 "OWNER",
                 default="",
+            )
+            self.TELEGRAPH_API = config(
+                "TELEGRAPH_API", default="https://api.telegra.ph"
             )
         except Exception:
             print("Environment vars Missing; or")
@@ -50,9 +60,19 @@ class Config:
 
 class Runtime_Config:
     def __init__(self):
-        self.greenAPI = None
+        self.initialized_client = False
+        self.author = None
+        self.author_url = None
+        self.banned = []
+        self.client = None
+        self.docker_deployed = False
+        self.enka_dict = {}
+        self.ignore_pm = False
+        self.max_message_length = 4096
         self.offline = False
         self.paused = False
+        self.rss_dict = {}
+        self.rss_ran_once = False
         self.version = None
 
 

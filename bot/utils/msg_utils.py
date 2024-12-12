@@ -1,14 +1,274 @@
 import argparse
 import re
-import shutil
-import urllib.request
+from functools import partial
 
-from bot.config import _bot, conf
+from bs4 import BeautifulSoup
+
+from bot import Message, MessageEv, NewAClient, jid, pyro_errors
+from bot.config import bot, conf
+from bot.fun.quips import enquip3
 from bot.others.exceptions import ArgumentParserError
 
-from .os_utils import s_remove
+from .bot_utils import gfn, post_to_tgph
+from .log_utils import log, logger
 
-# from .log_utils import log, logger
+
+def user_is_allowed(user: str | int):
+    user = str(user)
+    return user not in bot.banned
+
+
+def user_is_owner(user: str | int):
+    user = str(user)
+    return user in conf.OWNER
+
+
+def user_is_dev(user: str):
+    user = int(user)
+    return user == conf.DEV
+
+
+def pm_is_allowed(event: Event):
+    if event.chat.is_group:
+        return not bot.ignore_pm
+    return True
+
+
+function_dict = {None: []}
+def register(key: str | None = None):
+    def dec(fn):
+        if not key:
+            function_dict[key].append(fn)
+        else:
+            key = conf.CMD_PREFIX + key 
+            function_dict.update({key: fn})
+    return dec
+
+bot.register = register
+
+async def on_message(client: NewAClient, message: MessageEv):
+    event = construct_event(message)
+    if event.type == "text":
+        command, args = (
+            event.text.split(maxsplit=1)
+            if len(event.text.split()) > 1
+            else (event.text, None)
+        )
+        func = function_dict.get(command)
+        if func:
+            await func(client, event)
+    for func in function_dict[None]:
+        await func(client, event)
+
+class Event:
+    def __init__(self):
+        self.client = bot.client
+        self.constructed = False
+
+    def __str__(self):
+        return self.text
+
+    class User:
+        def __init__(self):
+            self.name = None
+
+        def construct(self, message: MessageEv):
+            self.jid = message.Info.MessageSource.Sender
+            self.id = self.jid.User
+            self.is_empty = message.Info.MessageSource.Sender.IsEmpty
+            self.name = message.Info.Pushname
+
+    class Chat:
+        def __init__(self):
+            self.name = None
+
+        def construct(self, message: MessageEv):
+            self.jid = message.Info.MessageSource.Chat
+            self.id = self.jid.User
+            self.is_empty = message.Info.MessageSource.Sender.IsEmpty
+            self.is_group = message.Info.MessageSource.IsGroup
+
+    def construct(self, message: MessageEv, add_replied: bool = True):
+        self.chat = self.Chat()
+        self.chat.construct(message)
+        self.from_user = self.User()
+        self.user.construct(message)
+        self.message = message
+
+        # To do support other message types
+        self.id = message.Info.ID
+        self.type = message.Info.Type
+        self.media_type = message.Info.MediaType
+        self.ext_msg = message.Message.extendedTextMessage
+        self.text_msg = message.Message.conversation
+        self.short_text = self.text_msg
+        self.text = self.ext_msg.text
+        #mention_str = f"@{(self.w_id.split('@'))[0]}"
+        #self.mentioned = self.text.startswith(mention_str) if self.text else False
+        #if self.mentioned:
+        #    self.text = (self.text.split(maxsplit=1)[1]).strip()
+        self.text = self.text or self.short_text
+        # To do expand quoted; has members [stanzaID, participant, quotedMessage.conversation]
+        self.quoted = self.ext_msg.contextInfo if add_replied else None
+        self.replied_to = get_quoted_msg()
+        self.outgoing = message.Info.MessageSource.IsFromMe
+        self.is_status = (message.Info.MessageSource.Chat.User.casefold() == "status")
+        self.constructed = True
+        return self
+
+
+    async def delete(self):
+        await self.client.revoke_message(self.chat.jid, self.sender.jid, self.id)
+        return None
+
+
+    async def edit(self, text: str):
+        msg = Message(conversation=text)
+        response = await self.client.edit_message(self.chat.jid, self.id, msg)
+        msg = self.gen_new_msg(response.ID)
+        return construct_event(msg)
+
+
+    async def reply(self, text: str =None, file: str | bytes = None, file_name: str = None, image str = None, quote: bool = True, link_preview: bool= True, reply_privately: bool = False):
+        if not self.constructed:
+            return await self.reply_document(file, file_name, text, quote)
+        if image and file_name:
+            return await self.reply_photo(image, text, quote)
+        if not text:
+            raise Exception("Specify a text to reply with.")
+        #msg_id = self.id if quote else None
+        print("here.")
+
+        response = await self.client.reply_message(text, self.message, link_preview=link_preview, reply_privately=reply_privately)
+        #self.id = response.ID
+        #self.text = text
+        #new_jid = jid.build_jid(conf.PHNUMBER)
+        #self.user.jid = new_jid
+        #self.user.id = new_jid.User
+
+        #self.user.name = None
+        msg = self.gen_new_msg(response.ID)
+        return construct_event(msg)
+
+    async def reply_document(self, document: str | bytes, file_name: str, caption: str = None, quote: bool = True):
+        quoted = self.message if quote else None
+        response = await self.client.send_document(
+            self.chat.jid, document, caption, filename=file_name, quoted=quoted
+        )
+        msg = self.gen_new_msg(response.ID)
+        return construct_event(msg)
+
+    async def reply_photo(self, photo: str | bytes, caption: str = None, quote: bool = True, viewonce: bool = False):
+        quoted = self.message if quote else None
+        response = await self.client.send_image(
+            self.chat.jid, photo, caption, quoted=quoted, viewonce=viewonce
+        )
+        msg = self.gen_new_msg(response.ID)
+        return construct_event(msg)
+
+    async def upload_file(self, file: bytes):
+        response = await self.client.upload(file)
+        msg = self.gen_new_msg(response.ID)
+        return construct_event(msg)
+    
+    def gen_new_msg(self, msg_id: str, user_id: str = None):
+        msg = self.message
+        msg.Info.ID = msg_id
+        msg.Info.MessageSource.Sender.User = (user_id or conf.PH_NUMBER)
+        return msg
+
+    def get_quoted_msg(self):
+        if not self.quoted:
+            return
+        msg = self.gen_new_msg(self.quoted.stanzaID, (self.quoted.participant.split("@"))[0])
+        return construct_event(msg, False)
+
+def construct_event(message: MessageEv, add_replied=True):
+    msg = Event()
+    return msg.construct(message, add_replied=add_replied)
+
+
+# def mentioned(event):
+    # return event.text.startswith(f"@{(event.w_id.split('@'))[0]}")
+
+
+
+def sanitize_text(text: str) -> str:
+    if not text:
+        return text
+    text = BeautifulSoup(text, "html.parser").text
+    return (text[:900] + "…") if len(text) > 900 else text
+
+
+async def parse_and_send_rss(data: dict, chat_ids: list = None):
+    try:
+        author = data.get("author")
+        chats = chat_ids or conf.RSS_CHAT.split()
+        pic = data.get("pic")
+        content = data.get("content")
+        summary = sanitize_text(data.get("summary"))
+        tgh_link = str()
+        title = data.get("title")
+        url = data.get("link")
+        # auth_text = f" by {author}" if author else str()
+        caption = f"*{title}*"
+        caption += f"\n`{summary or str()}`"
+        if content:
+            if len(content) > 65536:
+                content = (
+                    content[:65430]
+                    + "<strong>...<strong><br><br><strong>(TRUNCATED DUE TO CONTENT EXCEEDING MAX LENGTH)<strong>"
+                )
+            tgh_link = (await post_to_tgph(title, content, author, url))["url"]
+            caption += f"\n\n*Telegraph:* {tgh_link}\n*Hoyolab:* {url}"
+        expanded_chat = []
+        for chat in chats:
+            (
+                expanded_chat.append(chat)
+                if chat
+                else expanded_chat.extend(conf.RSS_CHAT.split())
+            )
+        for chat in expanded_chat:
+            top_chat = chat.split(":")
+            chat, top_id = (
+                map(str, top_chat) if len(top_chat) > 1 else (str(top_chat[0]), None)
+            )
+            await send_rss(caption, chat, pic, top_id)
+    except Exception:
+        await logger(Exception)
+
+
+async def send_rss(caption, chat, pic, top_id):
+    try:
+        if pic > 1:
+            for img in pic:
+                await bot.client.send_image(
+                    jid.build_jid(chat),
+                    img,
+                    caption,
+                )
+                caption = None
+        elif pic:
+            await bot.client.send_image(
+                jid.build_jid(chat),
+                pic,
+                caption,
+            )
+        else:
+            await bot.client.send_message,
+                jid.build_jid(chat),
+                caption,
+                reply_to_message_id=top_id,
+            )
+    except Exception:
+        await logger(Exception)
+
+
+async def clean_reply(event, reply, func, *args, **kwargs):
+    clas = reply if reply else event
+    func = getattr(clas, func)
+    pfunc = partial(func, *args, **kwargs)
+    return await pfunc()
 
 
 class ThrowingArgumentParser(argparse.ArgumentParser):
@@ -36,140 +296,17 @@ def get_args(*args, to_parse: str, get_unknown=False):
     return flag
 
 
-class Message:
-    def __init__(self):
-        self.client = _bot.greenAPI
-        self.constructed = False
 
-    def __str__(self):
-        return self.text
-
-    class User:
-        def __init__(self):
-            self.id = None
-            self.name = None
-
-        def construct(self, body):
-            self.id = body.get("senderData").get("sender")
-            self.name = body.get("senderData").get("senderName")
-
-    class Chat:
-        def __init__(self):
-            self.id = None
-            self.name = None
-
-        def construct(self, body):
-            self.id = body.get("senderData").get("chatId")
-            self.name = body.get("senderData").get("chatName")
-
-    def construct(self, body):
-        self.chat = self.Chat()
-        self.chat.construct(body)
-        self.user = self.User()
-        self.user.construct(body)
-
-        # To do support other message types
-        self.id = body.get("idMessage")
-        self.type = body.get("messageData").get("typeMessage")
-        self.ext_msg = body.get("messageData").get("extendedTextMessageData")
-        self.text_msg = body.get("messageData").get("textMessageData")
-        self.short_text = self.text_msg.get("textMessage") if self.text_msg else None
-        self.text = self.ext_msg.get("text") if self.ext_msg else None
-        self.w_id = body.get("instanceData").get("wid")
-        mention_str = f"@{(self.w_id.split('@'))[0]}"
-        self.mentioned = self.text.startswith(mention_str) if self.text else False
-        if self.mentioned:
-            self.text = (self.text.split(maxsplit=1)[1]).strip()
-        self.text = self.text or self.short_text
-        # To do expand quoted
-        self.quoted = body.get("messageData").get("quotedMessage")
-        self.constructed = True
-        return self
-
-    def reply(self, text=None, file=None, file_name=None, link=None, quote=True):
-        if not self.constructed:
-            raise Exception("Method not ready.")
-        if file and file_name:
-            return self.reply_file(file, file_name, text, quote)
-        if link and file_name:
-            return self.reply_link(link, file_name, text, quote)
-        if not text:
-            raise Exception("Specify a text to reply with.")
-        msg_id = self.id if quote else None
-        print("here.")
-        # response = await sync_to_async(
-        #    self.client.sending.sendMessage, self.chat.id, text, msg_id
-        # )
-        response = self.client.sending.sendMessage(self.chat.id, text, msg_id)
-        print(response.data)
-        self.id = response.data.get("idMessage")
-        self.text = text
-        self.user.id = self.w_id
-        self.user.name = None
-        return self
-
-    def reply_file(self, file, file_name, caption=None, quote=True):
-        msg_id = self.id if quote else None
-        link = self.upload_file(file)
-        response = self.client.sending.sendFileByUrl(
-            self.chat.id, link, file_name, caption, msg_id
-        )
-        self.id = response.data.get("idMessage")
-        self.text = caption
-        self.user.id = self.w_id
-        self.user.name = None
-        return self
-
-    def reply_link(self, link, file_name, caption=None, quote=True):
-        msg_id = self.id if quote else None
-
-        with urllib.request.urlopen(link) as response, open(
-            file_name, "wb"
-        ) as out_file:
-            shutil.copyfileobj(response, out_file)
-        link = self.upload_file(file_name)
-        response = self.client.sending.sendFileByUrl(
-            self.chat.id, link, file_name, caption, msg_id
-        )
-        s_remove(file_name)
-        self.id = response.data.get("idMessage")
-        self.text = caption
-        self.user.id = self.w_id
-        self.user.name = None
-        return self
-
-    def upload_file(self, file):
-        response = self.client.sending.uploadFile(file)
-        return response.data.get("urlFile")
-
-
-def construct_event(body):
-    msg = Message()
-    return msg.construct(body)
-
-
-def mentioned(event):
-    return event.text.startswith(f"@{(event.w_id.split('@'))[0]}")
-
-
-def chat_is_allowed(user):
-    return user in conf.ALLOWED_CHATS if conf.ALLOWED_CHATS else True
-
-
-def user_is_owner(user):
-    return user.split("@")[0] in conf.OWNER if conf.OWNER else False
-
-
-def event_handler(
+async def event_handler(
     event,
     function,
+    client=None,
     require_args=False,
     disable_help=False,
     split_args=" ",
     default_args: str = False,
     use_default_args=False,
 ):
-    # etext = event.text or event.short_text
     args = (
         event.text.split(split_args, maxsplit=1)[1].strip()
         if len(event.text.split()) > 1
@@ -185,5 +322,5 @@ def event_handler(
     ):
         if disable_help:
             return
-        return event.reply(f"```{function.__doc__}```")
-    function(event, args)
+        return await event(f"`{function.__doc__}`")
+    await function(event, args, client)
