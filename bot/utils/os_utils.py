@@ -86,3 +86,7 @@ def read_n_to_last_line(filename, n=1):
 
 def file_exists(file):
     return Path(file).is_file()
+
+
+def touch(file):
+    return Path(file).touch()

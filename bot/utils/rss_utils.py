@@ -3,14 +3,14 @@ import asyncio
 from bs4 import BeautifulSoup
 from feedparser import parse as feedparse
 
-from bot import rss_dict_lock, wa_db
+from bot import con_ind, rss_dict_lock
 from bot.config import bot, conf
 from bot.workers.auto.schedule import addjob, scheduler
 
 from .db_utils import save2db2
 from .log_utils import log
 from .msg_utils import parse_and_send_rss
-from .os_utils import file_exists
+from .os_utils import file_exists, touch
 
 
 async def rss_monitor():
@@ -19,9 +19,10 @@ async def rss_monitor():
     """
     if not bot.initialized_client:
         # sudo client.is_ready checker
-        if not file_exists(wa_db):
+        if not file_exists(con_ind):
             return
         else:
+            touch(con_ind)
             bot.initialized_client = True
     if not conf.RSS_CHAT:
         log(e="RSS_CHAT not set! Shutting down rss scheduler...")

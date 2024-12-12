@@ -56,6 +56,7 @@ rss_dict_lock = asyncio.Lock()
 uptime = time.time()
 version_file = "version.txt"
 wa_db = "db.sqlite3"
+con_ind = ".CONNECTED"
 
 if os.path.exists(log_file_name):
     with open(log_file_name, "r+") as f_d:
