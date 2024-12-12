@@ -77,4 +77,4 @@ class Runtime_Config:
 
 
 conf = Config()
-_bot = Runtime_Config()
+bot = Runtime_Config()
