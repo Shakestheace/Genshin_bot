@@ -12,59 +12,6 @@ from .bot_utils import post_to_tgph
 from .log_utils import logger
 
 
-def user_is_allowed(user: str | int):
-    user = str(user)
-    return user not in bot.banned
-
-
-def user_is_owner(user: str | int):
-    user = str(user)
-    return user in conf.OWNER
-
-
-def user_is_dev(user: str):
-    user = int(user)
-    return user == conf.DEV
-
-
-def pm_is_allowed(event: Event):
-    if event.chat.is_group:
-        return not bot.ignore_pm
-    return True
-
-
-function_dict = {None: []}
-
-
-def register(key: str | None = None):
-    def dec(fn):
-        if not key:
-            function_dict[key].append(fn)
-        else:
-            key = conf.CMD_PREFIX + key
-            function_dict.update({key: fn})
-
-    return dec
-
-
-bot.register = register
-
-
-async def on_message(client: NewAClient, message: MessageEv):
-    event = construct_event(message)
-    if event.type == "text":
-        command, args = (
-            event.text.split(maxsplit=1)
-            if len(event.text.split()) > 1
-            else (event.text, None)
-        )
-        func = function_dict.get(command)
-        if func:
-            await func(client, event)
-    for func in function_dict[None]:
-        await func(client, event)
-
-
 class Event:
     def __init__(self):
         self.client = bot.client
@@ -213,6 +160,60 @@ class Event:
             self.quoted.stanzaID, (self.quoted.participant.split("@"))[0]
         )
         return construct_event(msg, False)
+
+
+def user_is_allowed(user: str | int):
+    user = str(user)
+    return user not in bot.banned
+
+
+def user_is_owner(user: str | int):
+    user = str(user)
+    return user in conf.OWNER
+
+
+def user_is_dev(user: str):
+    user = int(user)
+    return user == conf.DEV
+
+
+def pm_is_allowed(event: Event):
+    if event.chat.is_group:
+        return not bot.ignore_pm
+    return True
+
+
+function_dict = {None: []}
+
+
+def register(key: str | None = None):
+    def dec(fn):
+        if not key:
+            function_dict[key].append(fn)
+        else:
+            key = conf.CMD_PREFIX + key
+            function_dict.update({key: fn})
+
+    return dec
+
+
+bot.register = register
+
+
+async def on_message(client: NewAClient, message: MessageEv):
+    event = construct_event(message)
+    if event.type == "text":
+        command, args = (
+            event.text.split(maxsplit=1)
+            if len(event.text.split()) > 1
+            else (event.text, None)
+        )
+        func = function_dict.get(command)
+        if func:
+            await func(client, event)
+    for func in function_dict[None]:
+        await func(client, event)
+
 
 
 def construct_event(message: MessageEv, add_replied=True):
