@@ -81,7 +81,9 @@ async def _(client: NewAClient, message: MessageEv):
 ########### Start ############
 
 try:
-    loop = asyncio.get_event_loop()
+    # loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     if not bot.initialized_client:
         loop.run_until_complete(loop.create_task(wait_and_restart()))
         loop.run_until_complete(
