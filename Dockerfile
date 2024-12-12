@@ -15,6 +15,7 @@ RUN dnf -qq -y update && dnf -qq -y install git bash xz wget curl python3-pip ps
 COPY . .
 
 # 4. Install python3 requirements
+RUN pip3 install protobuf
 RUN pip3 install -r requirements.txt
 
 # 5. cleanup for arm64
