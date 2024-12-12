@@ -39,7 +39,7 @@ async def get_logs(event, args, client):
 
     except Exception:
         await logger(Exception)
-        await message.reply("`An error occurred.`")
+        await event.reply("`An error occurred.`")
 
 
 async def aexec(code, event):

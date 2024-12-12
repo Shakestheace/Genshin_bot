@@ -117,7 +117,7 @@ class Event:
     async def reply_document(
         self,
         document: str | bytes,
-        file_name: str,
+        file_name: str = None,
         caption: str = None,
         quote: bool = True,
     ):
