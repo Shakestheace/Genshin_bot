@@ -1,4 +1,4 @@
-from . import LOGS, ConnectedEv, MessageEv, NewAClient, asyncio, bot
+from . import LOGS, ConnectedEv, MessageEv, NewAClient, asyncio, bot, traceback
 from .startup.after import on_startup
 from .utils.msg_utils import Event, event_handler, on_message
 from .workers.handlers.dev import bash, eval_message, get_logs
@@ -82,7 +82,7 @@ async def _(client: NewAClient, message: MessageEv):
 try:
     loop = asyncio.get_event_loop()
     if not bot.initialized_client:
-        loop = run_until_complete(on_startup(client_is_ready=False))
+        loop.run_until_complete(on_startup(client_is_ready=False))
         loop.run_until_complete(
             bot.client.PairPhone(conf.PH_NUMBER, show_push_notification=True)
         )
