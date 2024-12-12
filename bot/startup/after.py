@@ -25,6 +25,7 @@ async def update_enka_assets():
 
 async def onrestart():
     try:
+        print("start onrestart function")
         if sys.argv[1] == "restart":
             msg = "*Restarted!*"
         elif sys.argv[1].startswith("update"):
@@ -38,6 +39,7 @@ async def onrestart():
         else:
             return
         chat_id, msg_id = map(str, sys.argv[2].split(":"))
+        print("almost end onrestart function")
         await bot.client.edit_message(jid.build_jid(chat_id), msg_id, msg)
     except Exception:
         await logger(Exception)
@@ -97,6 +99,7 @@ async def on_startup():
                 lambda: asyncio.create_task(on_termination(loop)),
             )
         if len(sys.argv) == 3:
+            print("here.")
             await onrestart()
         else:
             await asyncio.sleep(1)
