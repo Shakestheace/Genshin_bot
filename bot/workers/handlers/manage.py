@@ -7,7 +7,7 @@ from bot import bot, rss_dict_lock
 from bot.utils.bot_utils import list_to_str, split_text
 from bot.utils.db_utils import save2db2
 from bot.utils.log_utils import logger
-from bot.utils.msg_utils import event_handler, get_args, try_delete, user_is_owner
+from bot.utils.msg_utils import event_handler, get_args, user_is_owner
 from bot.utils.os_utils import re_x, updater
 from bot.utils.rss_utils import schedule_rss, scheduler
 
@@ -81,7 +81,7 @@ async def rss_handler(event, args, client):
         *listed in the order priority.
     """
     if not user_is_owner(event.from_user.id):
-        return await try_delete(event)
+        return
     arg, args = get_args(
         ["-d", "store_true"],
         ["-e", "store_true"],
