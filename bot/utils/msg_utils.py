@@ -194,6 +194,7 @@ def register(key: str | None = None):
         else:
             key = conf.CMD_PREFIX + key
             function_dict.update({key: fn})
+
     return dec
 
 
