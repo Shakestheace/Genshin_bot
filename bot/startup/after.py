@@ -2,7 +2,7 @@ import signal
 
 import aiohttp
 
-from bot import asyncio, bot, con_ind, conf, jid, sys, version_file
+from bot import Message, asyncio, bot, con_ind, conf, jid, sys, version_file
 from bot.fun.emojis import enmoji, enmoji2
 from bot.fun.quips import enquip, enquip2
 from bot.utils.gi_utils import enka_update
@@ -25,7 +25,6 @@ async def update_enka_assets():
 
 async def onrestart():
     try:
-        print("start onrestart function")
         if sys.argv[1] == "restart":
             msg = "*Restarted!*"
         elif sys.argv[1].startswith("update"):
@@ -39,8 +38,7 @@ async def onrestart():
         else:
             return
         chat_id, msg_id = map(str, sys.argv[2].split(":"))
-        print("almost end onrestart function")
-        await bot.client.edit_message(jid.build_jid(chat_id), msg_id, msg)
+        await bot.client.edit_message(jid.build_jid(chat_id), msg_id, Message(conversation=msg))
     except Exception:
         await logger(Exception)
 
@@ -89,20 +87,15 @@ async def on_startup():
     try:
         await update_enka_assets()
         scheduler.start()
-        print("here.")
-        loop = asyncio.get_running_loop()
-        bot.requests = aiohttp.ClientSession(loop=loop)
-        print("here.")
+        bot.requests = aiohttp.ClientSession(loop=bot.loop)
         for signame in {"SIGINT", "SIGTERM", "SIGABRT"}:
-            loop.add_signal_handler(
+            bot.loop.add_signal_handler(
                 getattr(signal, signame),
                 lambda: asyncio.create_task(on_termination(loop)),
             )
         if len(sys.argv) == 3:
-            print("here.")
             await onrestart()
         else:
-            print("www")
             await asyncio.sleep(1)
             await onstart()
     except Exception:
