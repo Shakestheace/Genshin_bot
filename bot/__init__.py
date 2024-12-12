@@ -55,7 +55,7 @@ local_enkadb = ".local_enkadb.pkl"
 log_file_name = "logs.txt"
 rss_dict_lock = asyncio.Lock()
 uptime = time.time()
-version_file = "version.txt
+version_file = "version.txt"
 wa_db = "db.sqlite3"
 
 if os.path.exists(log_file_name):

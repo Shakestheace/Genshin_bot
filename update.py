@@ -16,7 +16,7 @@ try:
     UPSTREAM_REPO = config(
         "UPSTREAM_REPO",
         default="https://github.com/Nubuki-all/Genshin_bot")
-    UPSTREAM_BRANCH = config("UPSTREAM_BRANCH", default="sync")
+    UPSTREAM_BRANCH = config("UPSTREAM_BRANCH", default="neon")
 
 except Exception:
     print("Environment vars Missing")

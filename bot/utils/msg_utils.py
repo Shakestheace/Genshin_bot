@@ -255,10 +255,9 @@ async def send_rss(caption, chat, pic, top_id):
                 caption,
             )
         else:
-            await bot.client.send_message,
+            await bot.client.send_message(
                 jid.build_jid(chat),
                 caption,
-                reply_to_message_id=top_id,
             )
     except Exception:
         await logger(Exception)
