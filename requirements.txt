@@ -6,6 +6,7 @@ feedparser
 html_telegraph_poster
 lxml[html_clean]
 neonize
+protobuf==5.29.1
 pymongo
 python-decouple
 git+https://github.com/Nubuki-all/EnkaCard
