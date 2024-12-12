@@ -87,8 +87,10 @@ async def on_startup():
     try:
         await update_enka_assets()
         scheduler.start()
+        print("here.")
         loop = asyncio.get_running_loop()
         bot.requests = aiohttp.ClientSession(loop=loop)
+        print("here.")
         for signame in {"SIGINT", "SIGTERM", "SIGABRT"}:
             loop.add_signal_handler(
                 getattr(signal, signame),
