@@ -1,4 +1,4 @@
-from . import ConnectedEv, LOGS, NewAClient, asyncio, bot, filters
+from . import LOGS, ConnectedEv, NewAClient, asyncio, bot
 from .startup.after import on_startup
 from .utils.msg_utils import Event, event_handler, on_message
 from .workers.handlers.dev import bash, eval_message, get_logs
@@ -15,6 +15,7 @@ from .workers.handlers.stuff import getmeme, hello
 @bot.client.event(ConnectedEv)
 async def on_connected(_: NewAClient, __: ConnectedEv):
     await on_startup()
+
 
 @bot.register("start")
 async def _(client: NewAClient, message: Event):
@@ -82,16 +83,11 @@ try:
     loop = asyncio.get_event_loop()
     if bot.initialized_client:
         loop = run_until_complete(on_startup(client_is_ready=False))
-        loop.run_until_complete( 
-            bot.client.PairPhone(
-                conf.PH_NUMBER,
-                show_push_notification=True
-            )
+        loop.run_until_complete(
+            bot.client.PairPhone(conf.PH_NUMBER, show_push_notification=True)
         )
     else:
-        loop.run_until_complete( 
-            bot.client.connect()
-        )
+        loop.run_until_complete(bot.client.connect())
 except Exception:
     LOGS.critical(traceback.format_exc())
     LOGS.critical("Cannot recover from error, exiting…")

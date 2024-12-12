@@ -31,6 +31,7 @@ if not os.path.isdir("enka/"):
 if file_exists(wa_db):
     bot.initialized_client = True
 
+
 def load_db(_db, _key, var, var_type=None):
     queries = _db.find({"_id": conf.PH_NUMBER})
     raw = None

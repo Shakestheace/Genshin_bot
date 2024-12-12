@@ -12,6 +12,7 @@ from .log_utils import log
 from .msg_utils import parse_and_send_rss
 from .os_utils import file_exists
 
+
 async def rss_monitor():
     """
     An asynchronous function to get rss links

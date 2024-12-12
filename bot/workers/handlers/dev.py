@@ -108,7 +108,6 @@ async def eval_message(message, cmd, client):
             return
     status_message = await message.reply("Processing ...")
 
-
     old_stderr = sys.stderr
     old_stdout = sys.stdout
     redirected_output = sys.stdout = io.StringIO()

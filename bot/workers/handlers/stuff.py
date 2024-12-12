@@ -1,4 +1,3 @@
-from bot import bot
 from bot.utils.bot_utils import get_json
 from bot.utils.log_utils import logger
 from bot.utils.msg_utils import pm_is_allowed, user_is_allowed, user_is_owner
@@ -52,7 +51,9 @@ async def getmeme(event, args, client):
             link += f"/{args}" if not args.isdigit() else str()
         caption, url, filename, nsfw = await gen_meme(link)
         await event.reply_photo(
-            caption=caption, photo=url, viewonce=nsfw,
+            caption=caption,
+            photo=url,
+            viewonce=nsfw,
         )
     except Exception as e:
         await logger(Exception)

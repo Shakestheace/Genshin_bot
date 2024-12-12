@@ -30,22 +30,21 @@ from urllib.parse import urlparse
 
 from html_telegraph_poster import TelegraphPoster
 from html_telegraph_poster import errors as telegraph_errors
-
 from neonize.aioze.client import NewAClient
 from neonize.events import (
+    CallOfferEv,
     ConnectedEv,
     MessageEv,
     PairStatusEv,
-    event,
     ReceiptEv,
-    CallOfferEv,
+    event,
 )
 from neonize.proto.waE2E.WAWebProtobufsE2E_pb2 import (
     ContextInfo,
     ExtendedTextMessage,
     Message,
 )
-from neonize.utils import log, jid
+from neonize.utils import jid, log
 
 from .config import bot, conf
 

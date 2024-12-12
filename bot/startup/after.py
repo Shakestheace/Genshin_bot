@@ -2,7 +2,7 @@ import signal
 
 import aiohttp
 
-from bot import asyncio, bot, conf, jid, sys, version_file, wa_db
+from bot import asyncio, bot, conf, jid, sys, version_file
 from bot.fun.emojis import enmoji, enmoji2
 from bot.fun.quips import enquip, enquip2
 from bot.utils.gi_utils import enka_update
@@ -46,7 +46,9 @@ async def onstart():
     try:
         for i in conf.OWNER.split():
             try:
-                await bot.client.send_message(jid.build_jid(i), f"*I'm {enquip()} {enmoji()}*")
+                await bot.client.send_message(
+                    jid.build_jid(i), f"*I'm {enquip()} {enmoji()}*"
+                )
             except Exception:
                 pass
     except BaseException:

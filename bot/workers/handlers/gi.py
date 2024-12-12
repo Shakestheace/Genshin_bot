@@ -220,7 +220,7 @@ async def weapon_handler(event, args, client):
         if not user_is_allowed(user):
             return
     try:
-        reply = event.replied_to
+        event.replied_to
         status = await event.reply(f"`Fetching weapon details for {args}…`")
         weapon = await get_gi_info("weapons", args)
         if not weapon:
@@ -276,7 +276,9 @@ async def fetch_weapon_detail(weapon: dict, weapon_stats: dict) -> tuple:
     caption += f"*Type:* `{typ}`\n"
     caption += f"*Base ATK:* `{base_atk}` ➜ `{max_base_atk}` __(Lvl {max_level})__\n"
     if main_stat:
-        caption += f"*{main_stat}:* `{base_stat}` ➜ `{max_main_stat}` __(Lvl {max_level})__\n"
+        caption += (
+            f"*{main_stat}:* `{base_stat}` ➜ `{max_main_stat}` __(Lvl {max_level})__\n"
+        )
     caption += f"`{(des[:2000] + '…') if len(des) > 2000 else des}`\n\n"
     if effects:
         caption += f"*{effect_name}* +\n"

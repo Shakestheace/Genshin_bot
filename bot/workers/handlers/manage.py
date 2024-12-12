@@ -7,13 +7,7 @@ from bot import bot, rss_dict_lock
 from bot.utils.bot_utils import list_to_str, split_text
 from bot.utils.db_utils import save2db2
 from bot.utils.log_utils import logger
-from bot.utils.msg_utils import (
-    avoid_flood,
-    event_handler,
-    get_args,
-    try_delete,
-    user_is_owner,
-)
+from bot.utils.msg_utils import event_handler, get_args, try_delete, user_is_owner
 from bot.utils.os_utils import re_x, updater
 from bot.utils.rss_utils import schedule_rss, scheduler
 
@@ -137,9 +131,7 @@ async def rss_list(event, args, client):
 
     async with rss_dict_lock:
         for i, (title, data) in zip(itertools.count(1), list(bot.rss_dict.items())):
-            list_feed += (
-                f"\n\n{i}. *Title:* `{title}`\n*Feed Url: *`{data['link']}`\n"
-            )
+            list_feed += f"\n\n{i}. *Title:* `{title}`\n*Feed Url: *`{data['link']}`\n"
             list_feed += f"*Chat:* `{list_to_str(data['chat']) or 'Default'}`\n"
             list_feed += f"*Include filter:* `{parse_filter(data['inf'])}`\n"
             list_feed += f"*Exclude filter:* `{parse_filter(data['exf'])}`\n"
@@ -201,9 +193,7 @@ async def rss_get(event, args, client):
             f"Here are the last *{count}* item(s) from {title}:",
         )
     except IndexError:
-        await imsg.edit(
-            "Parse depth exceeded. Try again with a lower value."
-        )
+        await imsg.edit("Parse depth exceeded. Try again with a lower value.")
     except Exception as e:
         await logger(Exception)
         await event.reply(f"error! - `{str(e)}`")
