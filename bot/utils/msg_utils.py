@@ -215,7 +215,6 @@ async def on_message(client: NewAClient, message: MessageEv):
         await func(client, event)
 
 
-
 def construct_event(message: MessageEv, add_replied=True):
     msg = Event()
     return msg.construct(message, add_replied=add_replied)
