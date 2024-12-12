@@ -44,7 +44,7 @@ class Event:
         self.chat = self.Chat()
         self.chat.construct(message)
         self.from_user = self.User()
-        self.user.construct(message)
+        self.from_user.construct(message)
         self.message = message
 
         # To do support other message types
