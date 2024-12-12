@@ -14,7 +14,7 @@ from .workers.handlers.stuff import getmeme, hello
 
 @bot.client.event(ConnectedEv)
 async def on_connected(_: NewAClient, __: ConnectedEv):
-    await on_startup()
+    asyncio.create_task(on_startup())
 
 
 @bot.register("start")
