@@ -188,12 +188,12 @@ function_dict = {None: []}
 
 def register(key: str | None = None):
     def dec(fn):
+        nonlocal key
         if not key:
             function_dict[key].append(fn)
         else:
             key = conf.CMD_PREFIX + key
             function_dict.update({key: fn})
-
     return dec
 
 
