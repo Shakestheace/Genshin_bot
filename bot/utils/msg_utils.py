@@ -129,7 +129,7 @@ class Event:
         return construct_event(msg)
 
 
-    async def reply(self, text: str =None, file: str | bytes = None, file_name: str = None, image str = None, quote: bool = True, link_preview: bool= True, reply_privately: bool = False):
+    async def reply(self, text: str =None, file: str | bytes = None, file_name: str = None, image: str = None, quote: bool = True, link_preview: bool= True, reply_privately: bool = False):
         if not self.constructed:
             return await self.reply_document(file, file_name, text, quote)
         if image and file_name:
