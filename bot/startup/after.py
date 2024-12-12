@@ -102,6 +102,7 @@ async def on_startup():
             print("here.")
             await onrestart()
         else:
+            print("www")
             await asyncio.sleep(1)
             await onstart()
     except Exception:
