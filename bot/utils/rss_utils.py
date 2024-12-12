@@ -3,14 +3,13 @@ import asyncio
 from bs4 import BeautifulSoup
 from feedparser import parse as feedparse
 
-from bot import con_ind, rss_dict_lock
+from bot import rss_dict_lock
 from bot.config import bot, conf
 from bot.workers.auto.schedule import addjob, scheduler
 
 from .db_utils import save2db2
 from .log_utils import log
 from .msg_utils import parse_and_send_rss
-from .os_utils import file_exists, touch
 
 
 async def rss_monitor():
