@@ -5,12 +5,11 @@ beautifulsoup4
 feedparser
 html_telegraph_poster
 lxml[html_clean]
-neonize
-protobuf==5.29.1
 pymongo
 python-decouple
 git+https://github.com/Nubuki-all/EnkaCard
 git+https://github.com/Nubuki-all/ENCard
+git+https://github.com/Nubuki-all/neonize@patch-1
 #Snyk pins 
 certifi>=2023.7.22 # not directly required, pinned by Snyk to avoid a vulnerability
 dnspython>=2.6.0rc1 # not directly required, pinned by Snyk to avoid a vulnerability
