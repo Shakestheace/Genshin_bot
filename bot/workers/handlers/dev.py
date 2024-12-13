@@ -81,7 +81,7 @@ async def bash(event, cmd, client):
             await asyncio.sleep(3)
             return await event.delete()
     else:
-        OUTPUT = f"```bash\n{html.escape(cmd)}```\n\n__PID:__\n{process.pid}\n\n```Stderr:\n{e}```\n\n```Output:\n{html.escape(o)}```\n"
+        OUTPUT = f"```bash\n{cmd}```\n\n_PID:_\n{process.pid}\n\n```Stderr:\n{e}```\n\n```Output:\n{o}```\n"
         await event.reply(OUTPUT)
 
 
@@ -135,8 +135,7 @@ async def eval_message(message, cmd, client):
         evaluation = "Success"
 
     final_output = "```python\n{}```\n\n```Output:\n{}```\n".format(
-        cmd, html.escape(evaluation.strip())
-    )
+        cmd, evaluation.strip())
 
     if len(final_output) > bot.max_message_length:
         final_output = "Evaluated:\n{}\n\nOutput:\n{}".format(cmd, evaluation.strip())
