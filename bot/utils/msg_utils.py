@@ -161,7 +161,7 @@ class Event:
         return msg
 
     def get_quoted_msg(self):
-        if not self.quoted.stanzaID:
+        if not (self.quoted and self.quoted.stanzaID):
             return
         msg = self.gen_new_msg(
             self.quoted.stanzaID, (self.quoted.participant.split("@"))[0]
