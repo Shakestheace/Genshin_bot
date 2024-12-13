@@ -1,7 +1,7 @@
 import argparse
+import os
 import re
 from functools import partial
-import os
 
 from bs4 import BeautifulSoup
 
