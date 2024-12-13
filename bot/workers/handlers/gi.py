@@ -187,7 +187,7 @@ async def enka_handler(event, args, client):
         if status:
             return await status.delete()
         if error:
-            return await event.reply(f"*Error:*\n{result}")
+            return await event.reply(f"*Error:*\n{result or error}")
 
 
 async def send_multi_cards(event, reply, results, profile):
