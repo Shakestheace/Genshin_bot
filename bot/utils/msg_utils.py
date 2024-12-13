@@ -254,7 +254,7 @@ def construct_message(chat_id, user_id, msg_id, text, server="s.whatsapp.net"):
 
 
 def get_msg_from_codes(codes: list, auto: bool = False):
-    msg = "*Genshin Impact Redeem Codes*"
+    msg = "*Genshin Impact Redeem Codes*\n\n"
     for code, no in zip(codes, itertools.count(1)):
         link = f"https://genshin.hoyoverse.com/en/gift?code={code.get('code')}"
         msg += f"*{no}.* {link}\n*Reward:* {code.get('rewards')}"
