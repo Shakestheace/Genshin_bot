@@ -84,7 +84,7 @@ async def manage_autogift_chat(event, args, client):
             if not bot.gift_dict["chats"]:
                 msg = "No chat set!"
                 return
-            msg = list_to_str(bot.gift_dict["chats"], sep=",")
+            msg = list_to_str(bot.gift_dict["chats"], sep=", ")
             return
         else:
             if not arg[0] in ("-add", "-rm"):

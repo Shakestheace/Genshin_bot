@@ -185,7 +185,7 @@ async def enka_handler(event, args, client):
         await logger(Exception)
     finally:
         if status:
-            return await status.delete()
+            await status.delete()
         if error:
             return await event.reply(f"*Error:*\n{result or error}")
 
