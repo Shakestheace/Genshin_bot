@@ -39,7 +39,7 @@ async def getmeme(event, args, client):
     Arguments:
     subreddit - custom subreddit
     """
-    user = user or event.from_user.id
+    user = event.from_user.id
     if not user_is_owner(user):
         if not pm_is_allowed(event):
             return

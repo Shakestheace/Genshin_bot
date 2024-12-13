@@ -84,20 +84,20 @@ async def enka_handler(event, args, client):
         akasha = arg.no_top
         reply = event.reply_to_message
         if arg.update:
-            u_reply = await event.reply("`Updating enka assets…`")
+            u_reply = await event.reply("*Updating enka assets…*")
             await enka_update()
             if not (card or cards or dump or prof):
                 return await u_reply.edit("Updated enka assets.")
             await u_reply.delete()
         if not (card or cards or dump or prof):
-            return await event.reply(f"```{enka_handler.__doc__}```")
+            return await event.reply(f"***{enka_handler.__doc__}***")
         if arg.t not in ("1", "2"):
             arg.t = 1
         profile, error = await get_enka_profile(args)
         if error:
             result = profile
             return
-        status = await event.reply("`Fetching card(s), Please Wait…`")
+        status = await event.reply("*Fetching card(s), Please Wait…*")
         if prof:
             cprofile, error = (
                 await get_enka_profile(args, card=True, template=arg.t)
@@ -221,14 +221,14 @@ async def weapon_handler(event, args, client):
             return
     try:
         reply = event.reply_to_message
-        status = await event.reply(f"`Fetching weapon details for {args}…`")
+        status = await event.reply(f"*Fetching weapon details for {args}…*")
         weapon = await get_gi_info("weapons", args)
         if not weapon:
-            await status.edit(f"*Weapon not found.*\nYou searched for `{args}`.")
+            await status.edit(f"*Weapon not found.*\nYou searched for *{args}*.")
             status = None
             return
         weapon_stats = await get_gi_info("weapons", args, stats=True)
-        await status.edit(f"`Building weapon card for {weapon.get('name')}…`")
+        await status.edit(f"*Building weapon card for {weapon.get('name')}…*")
         pic, caption = await fetch_weapon_detail(weapon, weapon_stats)
         await clean_reply(event, reply, "reply_photo", photo=pic, caption=caption)
     except Exception:
@@ -274,14 +274,14 @@ async def fetch_weapon_detail(weapon: dict, weapon_stats: dict) -> tuple:
             max_main_stat = f"{round(max_main_stat * 100)}%"
     caption = f"*{name}*\n"
     caption += f"{'⭐' * rarity}\n\n"
-    caption += f"*Rarity:* `{'★' * rarity}`\n"
-    caption += f"*Type:* `{typ}`\n"
-    caption += f"*Base ATK:* `{base_atk}` ➜ `{max_base_atk}` __(Lvl {max_level})__\n"
+    caption += f"*Rarity:* *{'★' * rarity}*\n"
+    caption += f"*Type:* *{typ}*\n"
+    caption += f"*Base ATK:* *{base_atk}* ➜ *{max_base_atk}* _(Lvl {max_level})_\n"
     if main_stat:
         caption += (
-            f"*{main_stat}:* `{base_stat}` ➜ `{max_main_stat}` __(Lvl {max_level})__\n"
+            f"*{main_stat}:* *{base_stat}* ➜ *{max_main_stat}* _(Lvl {max_level})_\n"
         )
-    caption += f"`{(des[:2000] + '…') if len(des) > 2000 else des}`\n\n"
+    caption += f"```{(des[:2000] + '…') if len(des) > 2000 else des}```\n\n"
     if effects:
         caption += f"*{effect_name}* +\n"
         caption += f"{effects}"
