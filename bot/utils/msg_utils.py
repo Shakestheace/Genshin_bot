@@ -339,6 +339,7 @@ async def send_rss(caption, chat, pic, server):
             await bot.client.send_message(
                 jid.build_jid(chat, server),
                 caption,
+                link_preview=True,
             )
     except Exception:
         await logger(Exception)
