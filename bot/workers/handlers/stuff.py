@@ -1,7 +1,12 @@
 from bot.config import bot, conf
 from bot.utils.bot_utils import get_json, list_to_str
 from bot.utils.log_utils import logger
-from bot.utils.msg_utils import get_msg_from_codes, pm_is_allowed, user_is_allowed, user_is_owner
+from bot.utils.msg_utils import (
+    get_msg_from_codes,
+    pm_is_allowed,
+    user_is_allowed,
+    user_is_owner,
+)
 
 meme_list = []
 
@@ -101,8 +106,8 @@ async def manage_autogift_chat(event, args, client):
     finally:
         if msg:
             await event.reply(msg)
-            
-        
+
+
 async def getgiftcodes(event, args, client):
     """
     Fetches a lastest genshin giftcodes
@@ -147,19 +152,17 @@ async def getcmds(event, args, client):
             return
     try:
         pre = conf.CMD_PREFIX
-        msg = (
-f"""{pre}start - *Hi!*
+        msg = f"""{pre}start - *Hi!*
 {pre}enka - *Fetch enka cards*
-{pre}weapon - *Fetch weapon details* 
+{pre}weapon - *Fetch weapon details*
 {pre}meme - *Get a random meme*
 {pre}codes - *Get lastest giftcodes*
 {pre}bash - *[Dev.] Run bash commands*
 {pre}eval - *[Dev.] Evaluate python commands*
-{pre}rss - *[Owner] Setup bot to auto post RSS feeds* 
+{pre}rss - *[Owner] Setup bot to auto post RSS feeds*
 {pre}update - *[Owner] Update & restarts bot*
 {pre}restart - *[Owner] Restarts bot*
 {pre}pause - *[Owner] Pauses bot*"""
-         )
         await event.reply(msg)
     except Exception as e:
         await logger(Exception)

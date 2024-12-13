@@ -11,7 +11,9 @@ uri2 = (
 )
 
 
-async def get_gi_info(folder="characters", query="qiqi", direct=False, stats=False, get=None):
+async def get_gi_info(
+    folder="characters", query="qiqi", direct=False, stats=False, get=None
+):
     url = uri.format(folder, query) if not stats else uri2.format(folder, query)
     if get:
         direct = True

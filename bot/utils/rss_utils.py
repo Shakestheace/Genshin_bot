@@ -130,6 +130,7 @@ def get_pic_url(feed: dict) -> list | None:
 def schedule_rss():
     addjob(conf.RSS_DELAY, rss_monitor)
 
+
 def schedule_gift_monitor():
     addjob(conf.RSS_DELAY, gift_code_monitor, "1", "gift_monitor")
 

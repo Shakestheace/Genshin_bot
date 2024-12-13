@@ -1,15 +1,18 @@
 from bot.config import bot, conf
 
 from .db_utils import save2db2
-from .log_utils import log
 from .gi_utils import get_gi_info
+from .log_utils import log
 from .msg_utils import get_msg_from_codes
+
 
 async def gift_code_monitor():
     try:
         if not bot.gift_dict["chats"]:
-            return 
-        response = await get_gi_info(get="https://hoyo-codes.seria.moe/codes?game=genshin")
+            return
+        response = await get_gi_info(
+            get="https://hoyo-codes.seria.moe/codes?game=genshin"
+        )
         new_codes = []
         _to_db = []
         for codes in response.get("codes"):
@@ -37,9 +40,9 @@ async def gift_code_monitor():
                 else (str(chat_ser[0]), "s.whatsapp.net")
             )
             try:
-                
-                 await send_rss(msg, chat, [], server)
-                 await asyncio.sleep(5)
+
+                await send_rss(msg, chat, [], server)
+                await asyncio.sleep(5)
             except Exception:
                 log(Exception)
         bot.gift_dict["codes"].extend(_to_db)
@@ -47,6 +50,3 @@ async def gift_code_monitor():
         log(e="Found and sent new codes to chat!")
     except Exception:
         log(Exception)
-
-
-
