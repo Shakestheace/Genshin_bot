@@ -1,5 +1,4 @@
 import asyncio
-import html
 import io
 import sys
 import traceback
@@ -135,7 +134,8 @@ async def eval_message(message, cmd, client):
         evaluation = "Success"
 
     final_output = "```python\n{}```\n\n```Output:\n{}```\n".format(
-        cmd, evaluation.strip())
+        cmd, evaluation.strip()
+    )
 
     if len(final_output) > bot.max_message_length:
         final_output = "Evaluated:\n{}\n\nOutput:\n{}".format(cmd, evaluation.strip())
