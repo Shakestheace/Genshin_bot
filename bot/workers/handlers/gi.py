@@ -325,4 +325,4 @@ async def add_background(image_suf: str, rarity: int, name: str = "weapon"):
     output = io.BytesIO()
     background.save(output, format="png")
     output.name = f"{name}.png"
-    return output
+    return output.getvalue()
