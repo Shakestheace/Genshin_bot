@@ -134,6 +134,7 @@ async def enka_handler(event, args, client):
             file_name = caption + ".png"
             path = "enka/" + file_name
             if not result.card:
+                error = True
                 characters = (
                     list_charcters(result.character_name) if not arg.v2 else str()
                 )
@@ -175,6 +176,7 @@ async def enka_handler(event, args, client):
                 await event.reply(error_txt)
 
             if not result.card:
+                error = True
                 characters = (
                     list_charcters(result.character_name) if not arg.v2 else str()
                 )
