@@ -134,7 +134,9 @@ async def enka_handler(event, args, client):
             file_name = caption + ".png"
             path = "enka/" + file_name
             if not result.card:
-                error = f"*{card} not found in showcase!*"
+                characters = list_charcters(result.character_name) if not arg.v2 else str()
+                result = f"*{card} not found in showcase!*"
+                result += f"\n\n{characters}" if characters else str()
                 return
             result.card[0].card.save(path)
             await clean_reply(
@@ -169,6 +171,12 @@ async def enka_handler(event, args, client):
 
             if errors:
                 await event.reply(error_txt)
+
+            if not result.card:
+                characters = list_charcters(result.character_name) if not arg.v2 else str()
+                result = f"*{cards} not found in showcase!*"
+                result += f"\n\n{characters}" if characters else str()
+                return
             return await send_multi_cards(event, reply, result, profile)
         if dump:
             result, error = (
@@ -204,6 +212,13 @@ async def send_multi_cards(event, reply, results, profile):
         reply = None
         await asyncio.sleep(3)
         s_remove(path)
+
+
+def list_charcters(characters):
+    msg = "*List of Characters in Showcase:*\n"
+    for character in characters:
+        msg += f"*⁍* {character}\n"
+    return msg
 
 
 async def weapon_handler(event, args, client):
