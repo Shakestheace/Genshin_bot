@@ -1,6 +1,8 @@
 import asyncio
 
 from bot.config import bot, conf
+from bot.fun.quips import enquip
+from bot.fun.stickers import ran_stick
 from bot.utils.bot_utils import get_json, list_to_str
 from bot.utils.db_utils import save2db2
 from bot.utils.log_utils import logger
@@ -182,5 +184,23 @@ async def getcmds(event, args, client):
 async def hello(event, args, client):
     try:
         await event.reply("Hi!")
+    except Exception:
+        await logger(Exception)
+
+
+async def sticker_reply(event, args, client):
+    """
+    Sends a random sticker upon being tagged
+    """
+    try:
+        if event.type != "text":
+            return
+        if not event.text.startswith("@"):
+            return
+        me = await bot.client.get_me()
+        if not event.text.startswith("@" + me.JID.User):
+            return
+        random_sticker = ran_stick()
+        await event.reply_sticker(random_sticker, quote=True, name=enquip(), packname=me.PushName)
     except Exception:
         await logger(Exception)

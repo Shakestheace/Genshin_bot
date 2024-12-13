@@ -9,7 +9,7 @@ from .workers.handlers.manage import (
     rss_handler,
     update_handler,
 )
-from .workers.handlers.stuff import getcmds, getgiftcodes, getmeme, hello
+from .workers.handlers.stuff import getcmds, getgiftcodes, getmeme, hello, sticker_reply
 
 
 @bot.client.event(ConnectedEv)
@@ -81,6 +81,11 @@ async def _(client: NewAClient, message: Event):
 @bot.register("restart")
 async def _(client: NewAClient, message: Event):
     await event_handler(message, restart_handler)
+
+
+@bot.register(None)
+async def _(client: NewAClient, message: Event):
+    await sticker_reply(message, None, client)
 
 
 @bot.client.event(MessageEv)

@@ -160,6 +160,18 @@ class Event:
         )
         msg = self.gen_new_msg(response.ID)
         return construct_event(msg)
+    
+    async def reply_sticker(self, file: str | bytes, quote: bool = True, name: str = "", packname: str = ""):
+        quoted = self.message if quote else None
+        response = await self.client.send_sticker(
+            self.chat.jid,
+            file,
+            quoted=quoted,
+            name=name,
+            packname=packname,
+        )
+        msg = self.gen_new_msg(response.ID)
+        return construct_event(msg)
 
     async def upload_file(self, file: bytes):
         response = await self.client.upload(file)
