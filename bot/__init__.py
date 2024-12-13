@@ -64,6 +64,7 @@ if os.path.exists(log_file_name):
 
 logging.basicConfig(
     level=logging.INFO,
+    force=True,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     datefmt="%d-%b-%y %H:%M:%S",
     handlers=[
