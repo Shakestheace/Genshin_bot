@@ -236,6 +236,7 @@ def construct_event(message: MessageEv, add_replied=True):
     msg = Event()
     return msg.construct(message, add_replied=add_replied)
 
+
 def construct_message(chat_id, user_id, msg_id, text):
     return base_msg(
         Message=Message(conversation=text),
@@ -247,6 +248,7 @@ def construct_message(chat_id, user_id, msg_id, text):
             ),
         ),
     )
+
 
 # def mentioned(event):
 # return event.text.startswith(f"@{(event.w_id.split('@'))[0]}")
