@@ -253,12 +253,13 @@ def construct_message(chat_id, user_id, msg_id, text, server="s.whatsapp.net"):
     )
 
 
-def get_msg_from_codes(codes: list):
-    msg = str()
+def get_msg_from_codes(codes: list, auto: bool = False):
+    msg = "*Genshin Impact Redeem Codes*"
     for code, no in zip(codes, itertools.count(1)):
         link = f"https://genshin.hoyoverse.com/en/gift?code={code.get('code')}"
         msg += f"*{no}.* {link}\n*Reward:* {code.get('rewards')}"
         msg += "\n\n"
+    msg += "_I'm a bot and this action was performed automatically._" if auto else str()
     return msg
 
 

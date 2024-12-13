@@ -98,7 +98,7 @@ async def manage_autogift_chat(event, args, client):
                 return
             bot.gift_dict["chats"].append(arg[1])
             await save2db2(bot.gift_dict, "gift")
-            msg = f"*{arg[1]}* has been added."
+            msg = f"*{arg[1] or 'default'}* has been added."
             return
         if arg[0] == "-rm":
             if not arg[1] in bot.gift_dict["chats"]:
@@ -106,7 +106,7 @@ async def manage_autogift_chat(event, args, client):
                 return
             bot.gift_dict["chats"].remove(arg[1])
             await save2db2(bot.gift_dict, "gift")
-            msg = f"*{arg[1]}* has been removed."
+            msg = f"*{arg[1] or 'default'}* has been removed."
             return
     except Exception:
         await logger(Exception)

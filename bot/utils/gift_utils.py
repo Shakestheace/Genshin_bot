@@ -26,7 +26,7 @@ async def gift_code_monitor():
             new_codes.append(codes)
         if not new_codes:
             return
-        msg = get_msg_from_codes(new_codes)
+        msg = get_msg_from_codes(new_codes, auto=True)
         expanded_chat = []
         for chat in bot.gift_dict["chats"]:
             (
