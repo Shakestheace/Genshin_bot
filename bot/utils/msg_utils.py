@@ -280,7 +280,7 @@ async def parse_and_send_rss(data: dict, chat_ids: list = None):
 
 async def send_rss(caption, chat, pic, top_id):
     try:
-        if pic > 1:
+        if len(pic) > 1:
             for img in pic:
                 await bot.client.send_image(
                     jid.build_jid(chat),
