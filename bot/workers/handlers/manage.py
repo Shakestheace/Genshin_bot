@@ -18,7 +18,7 @@ async def restart_handler(event, args, client):
         return
     try:
         rst = await event.reply("*Restarting Please Wait…*")
-        message = str(rst.chat.id) + ":" + str(rst.id)
+        message = f"{rst.chat.id}:{rst.id}:{rst.chat.server}"
         re_x("restart", message)
     except Exception:
         await event.reply("An Error Occurred")

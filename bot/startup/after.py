@@ -35,9 +35,9 @@ async def onrestart():
                 msg = "*No major update found!*\n" f"`Bot restarted! {enmoji()}`"
         else:
             return
-        chat_id, msg_id = map(str, sys.argv[2].split(":"))
+        chat_id, msg_id, server = map(str, sys.argv[2].split(":"))
         await bot.client.edit_message(
-            jid.build_jid(chat_id), msg_id, Message(conversation=msg)
+            jid.build_jid(chat_id, server), msg_id, Message(conversation=msg)
         )
     except Exception:
         await logger(Exception)
@@ -68,7 +68,7 @@ async def on_termination():
         pass
     # More cleanup code?
     event.set()
-    exit()
+    # exit()
 
 
 async def wait_on_client():

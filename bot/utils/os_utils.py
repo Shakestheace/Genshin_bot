@@ -45,7 +45,7 @@ def updater(msg=None):
             vmsg = False
 
         if msg:
-            message = str(msg.chat.id) + ":" + str(msg.id)
+            message = f"{msg.chat.id}:{msg.id}:{msg.chat.server}"
             os.execl(
                 sys.executable, sys.executable, "-m", "bot", f"update {vmsg}", message
             )
