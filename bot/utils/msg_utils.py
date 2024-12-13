@@ -194,7 +194,7 @@ def user_is_dev(user: str):
 
 
 def pm_is_allowed(event: Event):
-    if event.chat.is_group:
+    if not event.chat.is_group:
         return not bot.ignore_pm
     return True
 
@@ -236,7 +236,6 @@ def construct_event(message: MessageEv, add_replied=True):
     msg = Event()
     return msg.construct(message, add_replied=add_replied)
 
-
 def construct_message(chat_id, user_id, msg_id, text):
     return base_msg(
         Message=Message(conversation=text),
@@ -248,7 +247,6 @@ def construct_message(chat_id, user_id, msg_id, text):
             ),
         ),
     )
-
 
 # def mentioned(event):
 # return event.text.startswith(f"@{(event.w_id.split('@'))[0]}")
