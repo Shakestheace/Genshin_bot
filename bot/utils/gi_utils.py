@@ -1,3 +1,5 @@
+
+import aiohttp
 from aiohttp_retry import RandomRetry, RetryClient
 from encard import encard, update_namecard
 from enkacard import enc_error, encbanner
@@ -16,19 +18,23 @@ async def get_gi_info(folder="characters", query="qiqi", direct=False, stats=Fal
     url = uri.format(folder, query) if not stats else uri2.format(folder, query)
     field = "stats" if stats else "result"
     retry_options = RandomRetry(attempts=10)
-    retry_requests = RetryClient(bot.requests)
-    result = await retry_requests.post(url, retry_options=retry_options)
-    if direct:
-        return await result.json()
-    info = (await result.json()).get(field)
+    client_session = aiohttp.ClientSession()
+    retry_requests = RetryClient(client_session)
+    async with retry_requests.post(url, retry_options=retry_options) as result:
+        if direct:
+            return await result.json()
+        info = (await result.json()).get(field)
+    await client_session.close()
     return info
 
 
 async def async_dl(url):
     retry_options = RandomRetry(attempts=10)
-    retry_requests = RetryClient(bot.requests)
-    result = await retry_requests.get(url, retry_options=retry_options)
-    assert result.status == 200
+    client_session = aiohttp.ClientSession()
+    retry_requests = RetryClient(client_session)
+    async with retry_requests.get(url, retry_options=retry_options) as result:
+        assert result.status == 200
+    await client_session.close()
     return result
 
 
