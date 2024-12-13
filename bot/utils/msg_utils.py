@@ -6,7 +6,7 @@ from functools import partial
 
 from bs4 import BeautifulSoup
 
-from bot import Message, MessageEv, NewAClient, jid
+from bot import Message, MessageEv, NewAClient, base_msg, base_msg_info, base_msg_source, jid
 from bot.config import bot, conf
 from bot.others.exceptions import ArgumentParserError
 
@@ -228,6 +228,17 @@ def construct_event(message: MessageEv, add_replied=True):
     msg = Event()
     return msg.construct(message, add_replied=add_replied)
 
+def construct_message(chat_id, user_id, msg_id, text):
+    return base_msg(
+        Message=Message(conversation=text),
+        Info=base_msg_info(
+            ID=msg_id,
+            MessageSource=base_msg_source(
+                Chat=jid.build_jid(chat_id),
+                Sender=jid.build_jid(user_id),
+            ),
+        ),
+    )
 
 # def mentioned(event):
 # return event.text.startswith(f"@{(event.w_id.split('@'))[0]}")
@@ -280,14 +291,20 @@ async def parse_and_send_rss(data: dict, chat_ids: list = None):
 
 async def send_rss(caption, chat, pic, top_id):
     try:
-        if len(pic) > 1:
-            for img in pic:
-                await bot.client.send_image(
-                    jid.build_jid(chat),
-                    img,
-                    caption,
-                )
-                caption = None
+        len_pic = len(pic)
+        if len_pic > 1:
+            i = 0
+            rep = await bot.client.send_image(
+                jid.build_jid(chat),
+                pic[0],
+                caption,
+            )
+            message = construct_message(chat, conf.PH_NUMBER, rep.ID, "image")
+            msg = construct_event(message)
+            for img in pic[1:]:
+                i += 1
+                caption = f"*({i} of {len_pic - 1})*"
+                msg = await msg.reply_photo(img, caption, quote=True)
         elif pic:
             await bot.client.send_image(
                 jid.build_jid(chat),
@@ -360,5 +377,5 @@ async def event_handler(
     ):
         if disable_help:
             return
-        return await event(f"`{function.__doc__}`")
+        return await event.reply(f"`{function.__doc__}`")
     await function(event, args, client)
