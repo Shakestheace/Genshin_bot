@@ -1,5 +1,6 @@
 import random
 
+
 def ran_stick():
     stickers = (
         "https://mystickermania.com/cdn/stickers/anime/spy-family-anya-smirk-512x512.png",

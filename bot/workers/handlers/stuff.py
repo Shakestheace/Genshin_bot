@@ -201,6 +201,8 @@ async def sticker_reply(event, args, client):
         if not event.text.startswith("@" + me.JID.User):
             return
         random_sticker = ran_stick()
-        await event.reply_sticker(random_sticker, quote=True, name=enquip(), packname=me.PushName)
+        await event.reply_sticker(
+            random_sticker, quote=True, name=enquip(), packname=me.PushName
+        )
     except Exception:
         await logger(Exception)
