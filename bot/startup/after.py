@@ -85,7 +85,7 @@ async def wait_on_client():
 
 async def start_requests():
     try:
-        bot.requests = aiohttp.ClientSession(bot.loop)
+        bot.requests = aiohttp.ClientSession(loop=bot.loop)
     except Exception:
         await logger(Exception)
 
