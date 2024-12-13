@@ -70,7 +70,7 @@ class Event:
         return self
 
     async def delete(self):
-        await self.client.revoke_message(self.chat.jid, self.sender.jid, self.id)
+        await self.client.revoke_message(self.chat.jid, self.from_user.jid, self.id)
         return None
 
     async def edit(self, text: str):
