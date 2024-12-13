@@ -87,7 +87,7 @@ async def wait_and_restart():
 
 async def start_requests():
     try:
-        bot.requests = aiohttp.ClientSession().__aenter__()
+        bot.requests = await aiohttp.ClientSession().__aenter__()
     except Exception:
         await logger(Exception)
 
