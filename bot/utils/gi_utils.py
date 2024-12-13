@@ -1,10 +1,7 @@
-
 import aiohttp
 from aiohttp_retry import RandomRetry, RetryClient
 from encard import encard, update_namecard
 from enkacard import enc_error, encbanner
-
-from bot import bot
 
 from .log_utils import logger
 
