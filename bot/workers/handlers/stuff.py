@@ -65,7 +65,7 @@ async def getmeme(event, args, client):
     try:
         if args:
             link += f"/{args}" if not args.isdigit() else str()
-        caption, url, filename, nsfw = await gen_meme(link, not(event.chat.is_group))
+        caption, url, filename, nsfw = await gen_meme(link, not (event.chat.is_group))
         if not url:
             if nsfw:
                 return await event.reply("*NSFW is blocked!*")
