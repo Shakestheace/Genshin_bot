@@ -1,3 +1,4 @@
+
 import aiohttp
 from aiohttp_retry import RandomRetry, RetryClient
 from encard import encard, update_namecard
@@ -31,8 +32,9 @@ async def async_dl(url):
     retry_requests = RetryClient(client_session)
     async with retry_requests.get(url, retry_options=retry_options) as result:
         assert result.status == 200
+        raw = await result.content.read()
     await client_session.close()
-    return result
+    return raw
 
 
 async def enka_update():

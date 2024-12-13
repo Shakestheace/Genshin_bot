@@ -69,39 +69,30 @@ async def on_termination():
     except Exception:
         pass
     # More cleanup code?
-    await bot.requests.close()
     exit()
 
 
 async def wait_on_client():
     while True:
-        try:
-            await bot.client.get_me()
+        if bot.client.is_logged_in()
             if not file_exists(con_ind):
                 touch(con_ind)
-        except Exception:
+            break
+        else:
             pass
         await asyncio.sleep(0.5)
-
-
-async def start_requests():
-    try:
-        bot.requests = aiohttp.ClientSession(loop=bot.loop)
-    except Exception:
-        await logger(Exception)
 
 
 async def on_startup():
     try:
         await update_enka_assets()
         scheduler.start()
-        await start_requests()
         for signame in {"SIGINT", "SIGTERM", "SIGABRT"}:
             bot.loop.add_signal_handler(
                 getattr(signal, signame),
                 lambda: asyncio.create_task(on_termination()),
             )
-        # await wait_on_client()
+        await wait_on_client()
         if len(sys.argv) == 3:
             await onrestart()
         else:

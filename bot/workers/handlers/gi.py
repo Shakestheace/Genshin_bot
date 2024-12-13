@@ -308,10 +308,10 @@ async def add_background(image_suf: str, rarity: int, name: str = "weapon"):
     # Download the image
     image_url = f"https://api.hakush.in/gi/UI/{image_suf}.webp"
 
-    resp = await async_dl(image_url)
+    raw = await async_dl(image_url)
 
     # Create an Image object from the downloaded content
-    img = io.BytesIO((await resp.content.read()))
+    img = io.BytesIO(raw)
     img = Image.open(img)
 
     # Create a gold/purple/blue/green/white background image with the same
