@@ -16,7 +16,7 @@ from bot.utils.msg_utils import (
 meme_list = []
 
 
-async def gen_meme(link):
+async def gen_meme(link, pm=False):
     i = 1
     while True:
         result = await get_json(link)
@@ -34,7 +34,7 @@ async def gen_meme(link):
         if len(meme_list) > 10000:
             meme_list.clear()
         nsfw = result.get("nsfw")
-        if bot.block_nsfw and nsfw:
+        if bot.block_nsfw and nsfw and not pm:
             return None, None, None, True
         meme_list.append(pl)
         sb = result.get("subreddit")
@@ -42,6 +42,7 @@ async def gen_meme(link):
         caption = f"{nsfw_text if nsfw else str()}*{title.strip()}*\n{pl}\n\nBy u/{author} in r/{sb}"
         url = result.get("url")
         filename = f"{_id}.{url.split('.')[-1]}"
+        nsfw = False if pm else nsfw
         break
     return caption, url, filename, nsfw
 
@@ -64,7 +65,7 @@ async def getmeme(event, args, client):
     try:
         if args:
             link += f"/{args}" if not args.isdigit() else str()
-        caption, url, filename, nsfw = await gen_meme(link)
+        caption, url, filename, nsfw = await gen_meme(link, not(event.chat.is_group))
         if not url:
             if nsfw:
                 return await event.reply("*NSFW is blocked!*")
