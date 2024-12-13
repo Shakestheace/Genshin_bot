@@ -134,7 +134,9 @@ async def enka_handler(event, args, client):
             file_name = caption + ".png"
             path = "enka/" + file_name
             if not result.card:
-                characters = list_charcters(result.character_name) if not arg.v2 else str()
+                characters = (
+                    list_charcters(result.character_name) if not arg.v2 else str()
+                )
                 result = f"*{card} not found in showcase!*"
                 result += f"\n\n{characters}" if characters else str()
                 return
@@ -173,7 +175,9 @@ async def enka_handler(event, args, client):
                 await event.reply(error_txt)
 
             if not result.card:
-                characters = list_charcters(result.character_name) if not arg.v2 else str()
+                characters = (
+                    list_charcters(result.character_name) if not arg.v2 else str()
+                )
                 result = f"*{cards} not found in showcase!*"
                 result += f"\n\n{characters}" if characters else str()
                 return
