@@ -91,13 +91,14 @@ class Event:
         reply_privately: bool = False,
     ):
         if not self.constructed:
+            return
+        if file:
             return await self.reply_document(file, file_name, text, quote)
         if image and file_name:
             return await self.reply_photo(image, text, quote)
         if not text:
             raise Exception("Specify a text to reply with.")
         # msg_id = self.id if quote else None
-        print("here.")
 
         response = await self.client.reply_message(
             text,
@@ -160,7 +161,7 @@ class Event:
         return msg
 
     def get_quoted_msg(self):
-        if not self.quoted:
+        if not self.quoted.stanzaID:
             return
         msg = self.gen_new_msg(
             self.quoted.stanzaID, (self.quoted.participant.split("@"))[0]
@@ -289,7 +290,7 @@ async def send_rss(caption, chat, pic, top_id):
         elif pic:
             await bot.client.send_image(
                 jid.build_jid(chat),
-                pic,
+                pic[0],
                 caption,
             )
         else:

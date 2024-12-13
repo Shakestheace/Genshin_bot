@@ -129,7 +129,7 @@ async def rss_list(event, args, client):
 
     async with rss_dict_lock:
         for i, (title, data) in zip(itertools.count(1), list(bot.rss_dict.items())):
-            list_feed += f"\n\n{i}. *Title:* {title}\n*Feed Url: *{data['link']}\n"
+            list_feed += f"\n\n{i}. *Title:* {title}\n*Feed Url:* {data['link']}\n"
             list_feed += f"*Chat:* {list_to_str(data['chat']) or 'Default'}\n"
             list_feed += f"*Include filter:* {parse_filter(data['inf'])}\n"
             list_feed += f"*Exclude filter:* {parse_filter(data['exf'])}\n"
