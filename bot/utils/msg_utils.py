@@ -1,4 +1,5 @@
 import argparse
+import copy
 import os
 import re
 from functools import partial
@@ -155,7 +156,7 @@ class Event:
         return construct_event(msg)
 
     def gen_new_msg(self, msg_id: str, user_id: str = None):
-        msg = self.message
+        msg = copy.deepcopy(self.message)
         msg.Info.ID = msg_id
         msg.Info.MessageSource.Sender.User = user_id or conf.PH_NUMBER
         return msg
