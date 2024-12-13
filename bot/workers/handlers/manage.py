@@ -30,8 +30,8 @@ async def update_handler(event, args, client):
     try:
         if not user_is_owner(event.from_user.id):
             return
-        upt_mess = "Updating…"
-        reply = await event.reply(f"`{upt_mess}`")
+        upt_mess = "*Updating…*"
+        reply = await event.reply(f"{upt_mess}")
         updater(reply)
     except Exception:
         await logger(Exception)
@@ -90,7 +90,7 @@ async def rss_handler(event, args, client):
         get_unknown=True,
     )
     if not (arg.d or arg.e or arg.g or arg.l or arg.s):
-        return await event.reply(f"`{rss_handler.__doc__}`")
+        return await event.reply(f"{rss_handler.__doc__}")
     if arg.d:
         await event_handler(
             event, del_rss, client, True, default_args=args, use_default_args=True
@@ -129,11 +129,11 @@ async def rss_list(event, args, client):
 
     async with rss_dict_lock:
         for i, (title, data) in zip(itertools.count(1), list(bot.rss_dict.items())):
-            list_feed += f"\n\n{i}. *Title:* `{title}`\n*Feed Url: *`{data['link']}`\n"
-            list_feed += f"*Chat:* `{list_to_str(data['chat']) or 'Default'}`\n"
-            list_feed += f"*Include filter:* `{parse_filter(data['inf'])}`\n"
-            list_feed += f"*Exclude filter:* `{parse_filter(data['exf'])}`\n"
-            list_feed += f"*Paused:* `{data['paused']}`"
+            list_feed += f"\n\n{i}. *Title:* {title}\n*Feed Url: *{data['link']}\n"
+            list_feed += f"*Chat:* {list_to_str(data['chat']) or 'Default'}\n"
+            list_feed += f"*Include filter:* {parse_filter(data['inf'])}\n"
+            list_feed += f"*Exclude filter:* {parse_filter(data['exf'])}\n"
+            list_feed += f"*Paused:* {data['paused']}"
 
     lmsg = split_text(list_feed.strip("\n"), "\n\n", True)
     for i, msg in zip(itertools.count(1), lmsg):
@@ -159,7 +159,7 @@ async def rss_get(event, args, client):
     )
     if not arg.a:
         if len(args.split()) != 2:
-            return await event.reply(f"`{rss_get.__doc__}`")
+            return await event.reply(f"{rss_get.__doc__}")
         args, arg.a = args.split()
     if not arg.a.isdigit():
         return await event.reply("Second argument must be a digit.")
@@ -168,7 +168,7 @@ async def rss_get(event, args, client):
     count = int(arg.a)
     data = bot.rss_dict.get(title)
     if not (data and count > 0):
-        return await event.reply(f"`{rss_get.__doc__}`")
+        return await event.reply(f"{rss_get.__doc__}")
     try:
         imsg = await event.reply(
             f"Getting the last *{count}* item(s) from {title}...",
@@ -182,8 +182,8 @@ async def rss_get(event, args, client):
                 link = rss_d.entries[item_num]["links"][1]["href"]
             except IndexError:
                 link = rss_d.entries[item_num]["link"]
-            item_info += f"*Name:* `{rss_d.entries[item_num]['title'].replace('>', '').replace('<', '')}`\n"
-            item_info += f"*Link:* `{link}`\n\n"
+            item_info += f"*Name:* {rss_d.entries[item_num]['title'].replace('>', '').replace('<', '')}\n"
+            item_info += f"*Link:* {link}\n\n"
         for msg in split_text(item_info, "\n\n"):
             pre_event = await pre_event.reply(msg, quote=True)
             await asyncio.sleep(2)
@@ -194,7 +194,7 @@ async def rss_get(event, args, client):
         await imsg.edit("Parse depth exceeded. Try again with a lower value.")
     except Exception as e:
         await logger(Exception)
-        await event.reply(f"error! - `{str(e)}`")
+        await event.reply(f"error! - {str(e)}")
 
 
 async def rss_editor(event, args, client):
@@ -283,7 +283,7 @@ async def rss_editor(event, args, client):
             scheduler.start()
     await save2db2(bot.rss_dict, "rss")
     await event.reply(
-        f"Edited rss configurations for rss feed with title - `{args}` successfully!"
+        f"Edited rss configurations for rss feed with title - {args} successfully!"
     )
 
 
@@ -342,7 +342,7 @@ async def rss_sub(event, args, client):
         get_unknown=True,
     )
     if not (arg.t and args):
-        return await event.reply(f"`{rss_sub.__doc__}`")
+        return await event.reply(f"{rss_sub.__doc__}")
     feed_link = args
     title = arg.t
 
@@ -376,17 +376,17 @@ async def rss_sub(event, args, client):
         rss_d = feedparse(feed_link)
         last_title = rss_d.entries[0]["title"]
         msg += "*Subscribed!*"
-        msg += f"\n*Title:* `{title}`\n*Feed Url:* {feed_link}"
+        msg += f"\n*Title:* {title}\n*Feed Url:* {feed_link}"
         msg += f"\n*latest record for* {rss_d.feed.title}:"
-        msg += f"\nName: `{last_title.replace('>', '').replace('<', '')}`"
+        msg += f"\nName: {last_title.replace('>', '').replace('<', '')}"
         try:
             last_link = rss_d.entries[0]["links"][1]["href"]
         except IndexError:
             last_link = rss_d.entries[0]["link"]
-        msg += f"\nLink:- `{last_link}`"
-        msg += f"\n*Chat:-* `{arg.chat or 'Default'}`"
-        msg += f"\n*Filters:-*\ninf: `{arg.inf}`\nexf: `{arg.exf}`"
-        msg += f"\n*Paused:-* `{arg.p}`"
+        msg += f"\nLink:- {last_link}"
+        msg += f"\n*Chat:-* {arg.chat or 'Default'}"
+        msg += f"\n*Filters:-*\ninf: {arg.inf}\nexf: {arg.exf}"
+        msg += f"\n*Paused:-* {arg.p}"
         chat = []
         if arg.chat:
             _default = False
