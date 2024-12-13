@@ -122,7 +122,11 @@ class Event:
         quote: bool = True,
     ):
         quoted = self.message if quote else None
-        _, file_name = os.path.split(document) if not file_name and isinstance(document, str) else (None, file_name)
+        _, file_name = (
+            os.path.split(document)
+            if not file_name and isinstance(document, str)
+            else (None, file_name)
+        )
         response = await self.client.send_document(
             self.chat.jid, document, caption, filename=file_name, quoted=quoted
         )
