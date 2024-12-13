@@ -1,5 +1,5 @@
 from . import LOGS, ConnectedEv, MessageEv, NewAClient, asyncio, bot, conf, traceback
-from .startup.after import on_startup, start_requests, wait_and_restart
+from .startup.after import on_startup
 from .utils.msg_utils import Event, event_handler, on_message
 from .workers.handlers.dev import bash, eval_message, get_logs
 from .workers.handlers.gi import enka_handler, weapon_handler
