@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import copy
+import itertools
 import os
 import re
 from functools import partial
@@ -252,8 +253,13 @@ def construct_message(chat_id, user_id, msg_id, text, server="s.whatsapp.net"):
     )
 
 
-# def mentioned(event):
-# return event.text.startswith(f"@{(event.w_id.split('@'))[0]}")
+def get_msg_from_codes(codes: list):
+    msg = str()
+    for code, no in zip(codes, itertools.count(1)):
+        link = f"https://genshin.hoyoverse.com/en/gift?code={code.get('code')}"
+        msg += f"*{no}.* {link}\n*Reward:* {code.get('rewards')}"
+        msg += "\n\n"
+    return msg
 
 
 def sanitize_text(text: str) -> str:

@@ -9,7 +9,7 @@ from .workers.handlers.manage import (
     rss_handler,
     update_handler,
 )
-from .workers.handlers.stuff import getmeme, hello
+from .workers.handlers.stuff import getcmds, getgiftcodes, getmeme, hello
 
 
 @bot.client.event(ConnectedEv)
@@ -56,6 +56,16 @@ async def _(client: NewAClient, message: Event):
 @bot.register("meme")
 async def _(client: NewAClient, message: Event):
     await event_handler(message, getmeme)
+
+
+@bot.register("cmds")
+async def _(client: NewAClient, message: Event):
+    await event_handler(message, getcmds)
+
+
+@bot.register("codes")
+async def _(client: NewAClient, message: Event):
+    await event_handler(message, getgiftcodes)
 
 
 @bot.register("rss")

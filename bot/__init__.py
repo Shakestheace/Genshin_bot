@@ -51,6 +51,7 @@ from neonize.utils import jid, log
 
 from .config import bot, conf
 
+local_gdb = ".local_giftdb.pkl"
 local_rdb = ".local_rssdb.pkl"
 local_budb = ".banned_users.pkl"
 local_enkadb = ".local_enkadb.pkl"

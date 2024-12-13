@@ -8,6 +8,7 @@ from bot.config import bot, conf
 from bot.workers.auto.schedule import addjob, scheduler
 
 from .db_utils import save2db2
+from .gift_utils import gift_code_monitor
 from .log_utils import log
 from .msg_utils import parse_and_send_rss
 
@@ -129,6 +130,10 @@ def get_pic_url(feed: dict) -> list | None:
 def schedule_rss():
     addjob(conf.RSS_DELAY, rss_monitor)
 
+def schedule_gift_monitor():
+    addjob(conf.RSS_DELAY, gift_code_monitor, "1", "gift_monitor")
+
 
 schedule_rss()
+schedule_gift_monitor()
 # scheduler.start()

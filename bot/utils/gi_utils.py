@@ -11,16 +11,20 @@ uri2 = (
 )
 
 
-async def get_gi_info(folder="characters", query="qiqi", direct=False, stats=False):
+async def get_gi_info(folder="characters", query="qiqi", direct=False, stats=False, get=None):
     url = uri.format(folder, query) if not stats else uri2.format(folder, query)
+    if get:
+        direct = True
+        url = get
     field = "stats" if stats else "result"
     retry_options = RandomRetry(attempts=10)
     client_session = aiohttp.ClientSession()
     retry_requests = RetryClient(client_session)
-    async with retry_requests.post(url, retry_options=retry_options) as result:
+    async with retry_requests.get(url, retry_options=retry_options) as result:
         if direct:
-            return await result.json()
-        info = (await result.json()).get(field)
+            info = await result.json()
+        else:
+            info = (await result.json()).get(field)
     await client_session.close()
     return info
 
