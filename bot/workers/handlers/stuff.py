@@ -2,6 +2,7 @@ import asyncio
 
 from bot.config import bot, conf
 from bot.utils.bot_utils import get_json, list_to_str
+from bot.utils.db_utils import save2db2
 from bot.utils.log_utils import logger
 from bot.utils.msg_utils import (
     get_msg_from_codes,
@@ -94,6 +95,7 @@ async def manage_autogift_chat(event, args, client):
                 msg = "*Chat already added!*"
                 return
             bot.gift_dict["chats"].append(arg[1])
+            await save2db2(bot.gift_dict, "gift")
             msg = f"*{arg[1]}* has been added."
             return
         if arg[0] == "-rm":
@@ -101,6 +103,7 @@ async def manage_autogift_chat(event, args, client):
                 msg = "*Given chat was never added!*"
                 return
             bot.gift_dict["chats"].remove(arg[1])
+            await save2db2(bot.gift_dict, "gift")
             msg = f"*{arg[1]}* has been removed."
             return
     except Exception:
