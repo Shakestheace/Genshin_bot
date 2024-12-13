@@ -22,6 +22,8 @@ async def gen_meme(link):
         result = await get_json(link)
         _id = result.get("ups")
         title = result.get("title")
+        if not title:
+            return None, None, None, None
         author = result.get("author")
         pl = result.get("postLink")
         if i > 100:
@@ -31,9 +33,11 @@ async def gen_meme(link):
             continue
         if len(meme_list) > 10000:
             meme_list.clear()
+        nsfw = result.get("nsfw")
+        if bot.block_nsfw and nsfw:
+            return None, None, None, True
         meme_list.append(pl)
         sb = result.get("subreddit")
-        nsfw = result.get("nsfw")
         nsfw_text = "*🔞 NSFW*\n"
         caption = f"{nsfw_text if nsfw else str()}*{title.strip()}*\n{pl}\n\nBy u/{author} in r/{sb}"
         url = result.get("url")
@@ -61,6 +65,10 @@ async def getmeme(event, args, client):
         if args:
             link += f"/{args}" if not args.isdigit() else str()
         caption, url, filename, nsfw = await gen_meme(link)
+        if not url:
+            if nsfw:
+                return await event.reply("*NSFW is blocked!*")
+            return await event.reply("*Request Failed!*")
         await event.reply_photo(
             caption=caption,
             photo=url,

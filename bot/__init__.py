@@ -105,6 +105,7 @@ if sys.version_info < (3, 10):
 LOGS.info("Starting...")
 
 bot.ignore_pm = conf.IGNORE_PM
+bot.block_nsfw = conf.BLOCK_NSFW
 bot.tgp_client = TelegraphPoster(use_api=True, telegraph_api_url=conf.TELEGRAPH_API)
 
 bot.client = NewAClient(wa_db)

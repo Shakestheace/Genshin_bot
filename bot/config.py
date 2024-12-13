@@ -28,6 +28,7 @@ class Config:
                 "BANNED",
                 default=str(),
             )
+            self.BLOCK_NSFW = config("BLOCK_NSFW", default=True, cast=bool)
             self.PH_NUMBER = config("PH_NUMBER", default="")
 
             self.CMD_PREFIX = config("CMD_PREFIX", default="")
@@ -64,6 +65,7 @@ class Runtime_Config:
         self.author = None
         self.author_url = None
         self.banned = []
+        self.block_nsfw = False
         self.client = None
         self.docker_deployed = False
         self.enka_dict = {}
