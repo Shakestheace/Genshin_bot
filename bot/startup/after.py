@@ -101,7 +101,7 @@ async def on_startup():
                 getattr(signal, signame),
                 lambda: asyncio.create_task(on_termination()),
             )
-        await wait_on_client()
+        # await wait_on_client()
         if len(sys.argv) == 3:
             await onrestart()
         else:
