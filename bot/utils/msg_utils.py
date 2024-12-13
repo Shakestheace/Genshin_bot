@@ -293,7 +293,9 @@ async def parse_and_send_rss(data: dict, chat_ids: list = None):
         for chat in expanded_chat:
             top_chat = chat.split(":")
             chat, server = (
-                map(str, top_chat) if len(top_chat) > 1 else (str(top_chat[0]), "s.whatsapp.net")
+                map(str, top_chat)
+                if len(top_chat) > 1
+                else (str(top_chat[0]), "s.whatsapp.net")
             )
             await send_rss(caption, chat, pic, server)
             await asyncio.sleep(5)
@@ -311,7 +313,9 @@ async def send_rss(caption, chat, pic, server):
                 pic[0],
                 caption,
             )
-            message = construct_message(chat, conf.PH_NUMBER, rep.ID, "image", server=server)
+            message = construct_message(
+                chat, conf.PH_NUMBER, rep.ID, "image", server=server
+            )
             msg = construct_event(message)
             for img in pic[1:]:
                 i += 1
