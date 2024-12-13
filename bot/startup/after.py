@@ -58,7 +58,7 @@ async def onstart():
         pass
 
 
-async def on_termination(loop):
+async def on_termination():
     try:
         dead_msg = f"*I'm {enquip2()} {enmoji2()}*"
         for i in conf.OWNER.split():
@@ -69,6 +69,7 @@ async def on_termination(loop):
     except Exception:
         pass
     # More cleanup code?
+    await bot.requests.close()
     exit()
 
 
@@ -98,7 +99,7 @@ async def on_startup():
         for signame in {"SIGINT", "SIGTERM", "SIGABRT"}:
             bot.loop.add_signal_handler(
                 getattr(signal, signame),
-                lambda: asyncio.create_task(on_termination(loop)),
+                lambda: asyncio.create_task(on_termination()),
             )
         await wait_on_client()
         if len(sys.argv) == 3:
