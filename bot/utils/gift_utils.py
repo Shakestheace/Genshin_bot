@@ -1,9 +1,11 @@
+
+import asyncio
 from bot.config import bot, conf
 
 from .db_utils import save2db2
 from .gi_utils import get_gi_info
 from .log_utils import log
-from .msg_utils import get_msg_from_codes
+from .msg_utils import get_msg_from_codes, send_rss
 
 
 async def gift_code_monitor():
