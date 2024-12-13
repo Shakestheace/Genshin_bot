@@ -85,11 +85,17 @@ async def wait_and_restart():
         await asyncio.sleep(0.5)
 
 
+async def start_requests():
+    try:
+       bot.requests = aiohttp.ClientSession(loop=bot.loop)
+    except Exception:
+        await logger(Exception)
+
+
 async def on_startup():
     try:
         await update_enka_assets()
         scheduler.start()
-        bot.requests = aiohttp.ClientSession(loop=bot.loop)
         for signame in {"SIGINT", "SIGTERM", "SIGABRT"}:
             bot.loop.add_signal_handler(
                 getattr(signal, signame),
@@ -101,4 +107,4 @@ async def on_startup():
             await asyncio.sleep(1)
             await onstart()
     except Exception:
-        logger(Exception)
+        await logger(Exception)

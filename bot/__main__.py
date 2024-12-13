@@ -1,5 +1,5 @@
 from . import LOGS, ConnectedEv, MessageEv, NewAClient, asyncio, bot, conf, traceback
-from .startup.after import on_startup, wait_and_restart
+from .startup.after import on_startup, start_requests, wait_and_restart
 from .utils.msg_utils import Event, event_handler, on_message
 from .workers.handlers.dev import bash, eval_message, get_logs
 from .workers.handlers.gi import enka_handler, weapon_handler
@@ -89,6 +89,7 @@ try:
             bot.client.PairPhone(conf.PH_NUMBER, show_push_notification=True)
         )
     else:
+        loop.run_until_complete(start_requests())
         loop.run_until_complete(loop.create_task(on_startup()))
         loop.run_until_complete(bot.client.connect())
 except Exception:
