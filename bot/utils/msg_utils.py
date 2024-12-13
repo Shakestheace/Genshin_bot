@@ -1,4 +1,5 @@
 import argparse
+import asyncio
 import copy
 import os
 import re
@@ -237,13 +238,13 @@ def construct_event(message: MessageEv, add_replied=True):
     return msg.construct(message, add_replied=add_replied)
 
 
-def construct_message(chat_id, user_id, msg_id, text):
+def construct_message(chat_id, user_id, msg_id, text, server="s.whatsapp.net"):
     return base_msg(
         Message=Message(conversation=text),
         Info=base_msg_info(
             ID=msg_id,
             MessageSource=base_msg_source(
-                Chat=jid.build_jid(chat_id),
+                Chat=jid.build_jid(chat_id, server),
                 Sender=jid.build_jid(user_id),
             ),
         ),
@@ -291,25 +292,26 @@ async def parse_and_send_rss(data: dict, chat_ids: list = None):
             )
         for chat in expanded_chat:
             top_chat = chat.split(":")
-            chat, top_id = (
-                map(str, top_chat) if len(top_chat) > 1 else (str(top_chat[0]), None)
+            chat, server = (
+                map(str, top_chat) if len(top_chat) > 1 else (str(top_chat[0]), "s.whatsapp.net")
             )
-            await send_rss(caption, chat, pic, top_id)
+            await send_rss(caption, chat, pic, server)
+            await asyncio.sleep(5)
     except Exception:
         await logger(Exception)
 
 
-async def send_rss(caption, chat, pic, top_id):
+async def send_rss(caption, chat, pic, server):
     try:
         len_pic = len(pic)
         if len_pic > 1:
             i = 0
             rep = await bot.client.send_image(
-                jid.build_jid(chat),
+                jid.build_jid(chat, server=server),
                 pic[0],
                 caption,
             )
-            message = construct_message(chat, conf.PH_NUMBER, rep.ID, "image")
+            message = construct_message(chat, conf.PH_NUMBER, rep.ID, "image", server=server)
             msg = construct_event(message)
             for img in pic[1:]:
                 i += 1
@@ -317,13 +319,13 @@ async def send_rss(caption, chat, pic, top_id):
                 msg = await msg.reply_photo(img, caption, quote=True)
         elif pic:
             await bot.client.send_image(
-                jid.build_jid(chat),
+                jid.build_jid(chat, server),
                 pic[0],
                 caption,
             )
         else:
             await bot.client.send_message(
-                jid.build_jid(chat),
+                jid.build_jid(chat, server),
                 caption,
             )
     except Exception:
