@@ -6,7 +6,15 @@ from functools import partial
 
 from bs4 import BeautifulSoup
 
-from bot import Message, MessageEv, NewAClient, base_msg, base_msg_info, base_msg_source, jid
+from bot import (
+    Message,
+    MessageEv,
+    NewAClient,
+    base_msg,
+    base_msg_info,
+    base_msg_source,
+    jid,
+)
 from bot.config import bot, conf
 from bot.others.exceptions import ArgumentParserError
 
@@ -228,6 +236,7 @@ def construct_event(message: MessageEv, add_replied=True):
     msg = Event()
     return msg.construct(message, add_replied=add_replied)
 
+
 def construct_message(chat_id, user_id, msg_id, text):
     return base_msg(
         Message=Message(conversation=text),
@@ -239,6 +248,7 @@ def construct_message(chat_id, user_id, msg_id, text):
             ),
         ),
     )
+
 
 # def mentioned(event):
 # return event.text.startswith(f"@{(event.w_id.split('@'))[0]}")
