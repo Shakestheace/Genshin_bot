@@ -1,3 +1,5 @@
+import asyncio
+
 from bot.config import bot, conf
 from bot.utils.bot_utils import get_json, list_to_str
 from bot.utils.log_utils import logger
@@ -129,9 +131,12 @@ async def getgiftcodes(event, args, client):
             return
     link = "https://hoyo-codes.seria.moe/codes?game=genshin"
     try:
+        reply = await event.reply("*Fetching latest giftcodes…*")
         result = await get_json(link)
         msg = get_msg_from_codes(result.get("codes"))
         await event.reply(msg)
+        await asyncio.sleep(5)
+        await reply.delete()
     except Exception as e:
         await logger(Exception)
         return await event.reply(f"*Error:*\n{e}")

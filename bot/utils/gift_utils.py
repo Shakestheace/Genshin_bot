@@ -16,7 +16,7 @@ async def gift_code_monitor():
         new_codes = []
         _to_db = []
         for codes in response.get("codes"):
-            if code.get("id") == 43:
+            if codes.get("id") == 43:
                 continue
             if codes.get("code") in bot.gift_dict["codes"]:
                 continue
