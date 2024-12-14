@@ -93,12 +93,13 @@ async def on_startup():
                 lambda: asyncio.create_task(on_termination()),
             )
         await wait_on_client()
-        await send_presence()
         if len(sys.argv) == 3:
             await onrestart()
         else:
             await asyncio.sleep(1)
             await onstart()
+        await send_presence()
+        await asyncio.sleep(5)
         await send_presence(False)
     except Exception:
         await logger(Exception)

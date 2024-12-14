@@ -187,7 +187,7 @@ class Event:
             if typing
             else ChatPresence.CHAT_PRESENCE_PAUSED
         )
-        return await self.send_chat_presence(
+        return await self.client.send_chat_presence(
             self.chat.jid, status, ChatPresenceMedia.CHAT_PRESENCE_MEDIA_TEXT
         )
 
