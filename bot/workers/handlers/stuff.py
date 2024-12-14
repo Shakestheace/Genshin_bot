@@ -6,7 +6,7 @@ from bot.fun.quips import enquip
 from bot.fun.stickers import ran_stick
 from bot.utils.bot_utils import get_json
 from bot.utils.log_utils import logger
-from bot.utils.msg_utils import pm_is_allowed, user_is_allowed, user_is_owner
+from bot.utils.msg_utils import clean_reply, pm_is_allowed, user_is_allowed, user_is_owner
 
 meme_list = []
 
@@ -146,8 +146,8 @@ async def sanitize_url(event, args, client):
         if not (event.quoted_text or args):
             return event.reply(sanitize_url.__doc__)
         status_msg = await event.reply("Please wait…")
+        extractor = URLExtract()
         if event.quoted_text:
-            extractor = URLExtract()
             msg = event.quoted_text
             urls = extractor.find_urls(msg)
             if not urls:
@@ -160,14 +160,14 @@ async def sanitize_url(event, args, client):
                 sanitized_links.append(clean_url(url))
             for a, b in zip(urls, sanitized_links):
                 new_msg = new_msg.replace(a, b)
-            return await event.reply(new_msg)
+            return await clean_reply(event,event.reply_to_message, "reply", new_msg)
         urls = extractor.find_urls(args)
         if not urls:
             return await event.reply(f"*No link found in your message to sanitize*")
         msg = "*Sanitized link(s):*"
         for url in urls:
             msg += f"\n\n{url}"
-        return await event.reply(msg)
+        return await clean_reply(event, event.reply_to_message, "reply", msg)
     except Exception:
         await logger(Exception)
     finally:
