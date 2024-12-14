@@ -139,7 +139,7 @@ async def sticker_reply(event, args, client):
         await event.reply_sticker(
             random_sticker,
             quote=True,
-            name=random.choice(enquip(), enquip4()),
+            name=random.choice((enquip(), enquip4())),
             packname=me.PushName,
         )
         await event.send_typing_status(False)
