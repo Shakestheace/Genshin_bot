@@ -7,7 +7,7 @@ import re
 from functools import partial
 
 from bs4 import BeautifulSoup
-from neonize.utils import ChatPresence, ChatPresenceMedia, Presence
+from neonize.utils.enum import ChatPresence, ChatPresenceMedia, Presence
 
 from bot import (
     Message,
