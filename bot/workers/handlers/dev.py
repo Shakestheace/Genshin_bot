@@ -30,8 +30,8 @@ async def get_logs(event, args, client):
             msg = "Nothing Here.\nTry with a higher number" if not msg else msg
             pre_event = event
             for smsg in split_text(msg):
-                smsg = f"```\n{smsg}\n```"
-                pre_event = await pre_event.reply(smsg, quote=True)
+                smsg = f"\n{smsg}\n"
+                pre_event = await pre_event.reply(smsg, quote=True, link_preview=False)
                 await asyncio.sleep(2)
         else:
             return await get_logs(event, None, client)
@@ -81,7 +81,7 @@ async def bash(event, cmd, client):
             return await event.delete()
     else:
         OUTPUT = f"```bash\n{cmd}```\n\n_PID:_\n{process.pid}\n\n```Stderr:\n{e}```\n\n```Output:\n{o}```\n"
-        await event.reply(OUTPUT)
+        await event.reply(OUTPUT, link_preview=False)
 
 
 async def aexec2(code, client, message):
