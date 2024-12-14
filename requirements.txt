@@ -2,11 +2,13 @@ aiohttp
 aiohttp_retry
 apscheduler
 beautifulsoup4
+clean_links
 feedparser
 html_telegraph_poster
 lxml[html_clean]
 pymongo
 python-decouple
+w3lib
 git+https://github.com/Nubuki-all/EnkaCard
 git+https://github.com/Nubuki-all/ENCard
 git+https://github.com/Nubuki-all/neonize@patch-1
