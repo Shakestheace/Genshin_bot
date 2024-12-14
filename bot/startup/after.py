@@ -6,6 +6,7 @@ from bot.fun.quips import enquip, enquip2
 from bot.utils.gi_utils import enka_update
 from bot.utils.local_db_utils import save_enka_db
 from bot.utils.log_utils import logger
+from bot.utils.msg_utils import send_presence
 from bot.utils.os_utils import file_exists, force_exit, touch
 from bot.utils.rss_utils import scheduler
 
@@ -92,10 +93,12 @@ async def on_startup():
                 lambda: asyncio.create_task(on_termination()),
             )
         await wait_on_client()
+        await send_presence()
         if len(sys.argv) == 3:
             await onrestart()
         else:
             await asyncio.sleep(1)
             await onstart()
+        await send_presence(False)
     except Exception:
         await logger(Exception)

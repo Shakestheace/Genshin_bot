@@ -7,6 +7,7 @@ import re
 from functools import partial
 
 from bs4 import BeautifulSoup
+from neonize.utils import ChatPresence, ChatPresenceMedia, Presence
 
 from bot import (
     Message,
@@ -114,6 +115,7 @@ class Event:
         if not text:
             raise Exception("Specify a text to reply with.")
         # msg_id = self.id if quote else None
+        await self.send_typing_status()
 
         response = await self.client.reply_message(
             text,
@@ -128,6 +130,7 @@ class Event:
         # self.user.id = new_jid.User
 
         # self.user.name = None
+        await self.send_typing_status(False)
         msg = self.gen_new_msg(response.ID)
         return construct_event(msg)
 
@@ -177,6 +180,10 @@ class Event:
         )
         msg = self.gen_new_msg(response.ID)
         return construct_event(msg)
+
+    async def send_typing_status(self, typing=True):
+        status = ChatPresence.CHAT_PRESENCE_COMPOSING if typing else ChatPresence.CHAT_PRESENCE_PAUSED
+        return await self.send_chat_presence(self.chat.jid, status, ChatPresenceMedia.CHAT_PRESENCE_MEDIA_TEXT)
 
     async def upload_file(self, file: bytes):
         response = await self.client.upload(file)
@@ -278,6 +285,11 @@ def get_msg_from_codes(codes: list, auto: bool = False):
         msg += "\n\n"
     msg += "_I'm a bot and this action was performed automatically._" if auto else str()
     return msg
+
+
+async def send_presence(online=True):
+    presence = Presence.AVAILABLE if online else Presence.UNAVAILABLE
+    return await bot.client.send_presence(presence)
 
 
 def sanitize_text(text: str) -> str:
