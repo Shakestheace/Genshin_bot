@@ -1,5 +1,6 @@
 import os
 import shutil
+import signal
 import sys
 from pathlib import Path
 from subprocess import run as bashrun
@@ -93,3 +94,7 @@ def file_exists(file):
 
 def touch(file):
     return Path(file).touch()
+
+
+def force_exit():
+    os.kill(os.getpid(), signal.SIGKILL)

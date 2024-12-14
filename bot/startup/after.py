@@ -6,7 +6,7 @@ from bot.fun.quips import enquip, enquip2
 from bot.utils.gi_utils import enka_update
 from bot.utils.local_db_utils import save_enka_db
 from bot.utils.log_utils import logger
-from bot.utils.os_utils import file_exists, touch
+from bot.utils.os_utils import file_exists, force_exit, touch
 from bot.utils.rss_utils import scheduler
 
 
@@ -67,7 +67,7 @@ async def on_termination():
     except Exception:
         pass
     # More cleanup code?
-    event.set()
+    force_exit()
     # exit()
 
 
