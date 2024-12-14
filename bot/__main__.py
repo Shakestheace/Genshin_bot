@@ -2,14 +2,14 @@ from . import LOGS, ConnectedEv, MessageEv, NewAClient, asyncio, bot, conf, trac
 from .startup.after import on_startup
 from .utils.msg_utils import Event, event_handler, on_message
 from .workers.handlers.dev import bash, eval_message, get_logs
-from .workers.handlers.gi import enka_handler, weapon_handler
+from .workers.handlers.gi import enka_handler, getgiftcodes, weapon_handler
 from .workers.handlers.manage import (
     pause_handler,
     restart_handler,
     rss_handler,
     update_handler,
 )
-from .workers.handlers.stuff import getcmds, getgiftcodes, getmeme, hello, sticker_reply
+from .workers.handlers.stuff import getcmds, getmeme, hello, sanitize_url, sticker_reply
 
 
 @bot.client.event(ConnectedEv)
@@ -66,6 +66,11 @@ async def _(client: NewAClient, message: Event):
 @bot.register("codes")
 async def _(client: NewAClient, message: Event):
     await event_handler(message, getgiftcodes)
+
+
+@bot.register("sanitize")
+async def _(client: NewAClient, message: Event):
+    await event_handler(message, sanitize_url)
 
 
 @bot.register("rss")

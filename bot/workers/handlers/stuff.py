@@ -1,5 +1,8 @@
 import asyncio
 
+from clean_links.clean import clean_url
+from urlextract import URLExtract
+
 from bot.config import bot, conf
 from bot.fun.quips import enquip
 from bot.fun.stickers import ran_stick
@@ -80,84 +83,6 @@ async def getmeme(event, args, client):
         return await event.reply(f"*Error:*\n{e}")
 
 
-async def manage_autogift_chat(event, args, client):
-    user = event.from_user.id
-    if not user_is_owner(user):
-        return
-    try:
-        msg = str()
-        arg = args.split(maxsplit=1)
-        if len(arg) == 1:
-            if arg[0] != "-get":
-                return
-            if not bot.gift_dict["chats"]:
-                msg = "No chat set!"
-                return
-            msg = list_to_str(bot.gift_dict["chats"], sep=", ")
-            return
-        else:
-            if not arg[0] in ("-add", "-rm"):
-                return
-        if not arg[1].split(":")[0].isdigit():
-            if arg[1].casefold() not in ("default", "."):
-                msg = "*Invalid chat!*"
-                return
-            arg[1] = None if arg[1] != "." else event.chat.id
-        if arg[0] == "-add":
-            if arg[1] in bot.gift_dict["chats"]:
-                msg = "*Chat already added!*"
-                return
-            bot.gift_dict["chats"].append(arg[1])
-            await save2db2(bot.gift_dict, "gift")
-            msg = f"*{arg[1] or 'default'}* has been added."
-            return
-        if arg[0] == "-rm":
-            if not arg[1] in bot.gift_dict["chats"]:
-                msg = "*Given chat was never added!*"
-                return
-            bot.gift_dict["chats"].remove(arg[1])
-            await save2db2(bot.gift_dict, "gift")
-            msg = f"*{arg[1] or 'default'}* has been removed."
-            return
-    except Exception:
-        await logger(Exception)
-    finally:
-        if msg:
-            await event.reply(msg)
-
-
-async def getgiftcodes(event, args, client):
-    """
-    Fetches a lastest genshin giftcodes
-    Uses hoyo-codes.seria.moe
-
-    Arguments:
-        -add
-        -rm
-        -get
-     add, remove and get chats for auto giftcodes
-    """
-    if args:
-        return await manage_autogift_chat(event, args, client)
-    user = event.from_user.id
-    if not user_is_owner(user):
-        if not pm_is_allowed(event):
-            return
-        if not user_is_allowed(user):
-            return
-    link = "https://hoyo-codes.seria.moe/codes?game=genshin"
-    try:
-        reply = await event.reply("*Fetching latest giftcodes…*")
-        result = await get_json(link)
-        msg = get_msg_from_codes(result.get("codes"))
-        await event.reply(msg)
-        await asyncio.sleep(5)
-        await reply.delete()
-    except Exception as e:
-        await logger(Exception)
-        return await event.reply(f"*Error:*\n{e}")
-
-
 async def getcmds(event, args, client):
     """
     Get list of commands
@@ -178,6 +103,7 @@ async def getcmds(event, args, client):
 {pre}weapon - *Fetch weapon details*
 {pre}meme - *Get a random meme*
 {pre}codes - *Get lastest giftcodes*
+{pre}sanitize - *Sanitize link or message*
 {pre}bash - *[Dev.] Run bash commands*
 {pre}eval - *[Dev.] Evaluate python commands*
 {pre}rss - *[Owner] Setup bot to auto post RSS feeds*
@@ -215,3 +141,41 @@ async def sticker_reply(event, args, client):
         )
     except Exception:
         await logger(Exception)
+
+
+async def sanitize_url(event, args, client):
+    """
+    Checks and sanitizes all links in replied message
+    
+    Can also receive a link as argument 
+    """
+    status_msg = None
+    try:
+        if not event.quoted_text or args:
+            return event.reply(sanitize_url.__doc__)
+        status_msg = await event.reply("Please wait…")
+        if event.quoted_text:
+            extractor = URLExtract()
+            msg = event.quoted_text
+            urls = extractor.find_urls(msg)
+            if not urls:
+                return await event.reply(f"*No link found in @{event.reply_to_message.from_user.id}'s message to sanitize*")
+            new_msg = msg
+            sanitized_links = []
+            for url in urls:
+                sanitized_links.append(clean_url(url))
+            for a, b in zip(urls, sanitized_links):
+                new_msg = new_msg.replace(a, b)
+            return await event.reply(new_msg)
+        urls = extractor.find_urls(args)
+        if not urls:
+            return await event.reply(f"*No link found in your message to sanitize*")
+        msg = "*Sanitized link(s):*"
+        for url in urls:
+            msg += f"\n\n{url}"
+        return await event.reply(msg)
+    except Exception:
+        await logger(Exception)
+    finally:
+        if status_msg:
+            await status_msg.delete()
