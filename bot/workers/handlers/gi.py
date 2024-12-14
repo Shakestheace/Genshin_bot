@@ -5,10 +5,8 @@ import itertools
 from bs4 import BeautifulSoup
 from PIL import Image
 
-from bot.config import bot, conf
-from bot.fun.quips import enquip
-from bot.fun.stickers import ran_stick
-from bot.utils.bot_utils import get_json, list_to_st
+from bot.config import bot
+from bot.utils.bot_utils import get_json
 from bot.utils.db_utils import save2db2
 from bot.utils.gi_utils import (
     async_dl,

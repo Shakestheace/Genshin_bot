@@ -1,20 +1,12 @@
-import asyncio
-
 from clean_links.clean import clean_url
 from urlextract import URLExtract
 
 from bot.config import bot, conf
 from bot.fun.quips import enquip
 from bot.fun.stickers import ran_stick
-from bot.utils.bot_utils import get_json, list_to_str
-from bot.utils.db_utils import save2db2
+from bot.utils.bot_utils import get_json
 from bot.utils.log_utils import logger
-from bot.utils.msg_utils import (
-    get_msg_from_codes,
-    pm_is_allowed,
-    user_is_allowed,
-    user_is_owner,
-)
+from bot.utils.msg_utils import pm_is_allowed, user_is_allowed, user_is_owner
 
 meme_list = []
 
@@ -146,8 +138,8 @@ async def sticker_reply(event, args, client):
 async def sanitize_url(event, args, client):
     """
     Checks and sanitizes all links in replied message
-    
-    Can also receive a link as argument 
+
+    Can also receive a link as argument
     """
     status_msg = None
     try:
@@ -159,7 +151,9 @@ async def sanitize_url(event, args, client):
             msg = event.quoted_text
             urls = extractor.find_urls(msg)
             if not urls:
-                return await event.reply(f"*No link found in @{event.reply_to_message.from_user.id}'s message to sanitize*")
+                return await event.reply(
+                    f"*No link found in @{event.reply_to_message.from_user.id}'s message to sanitize*"
+                )
             new_msg = msg
             sanitized_links = []
             for url in urls:
