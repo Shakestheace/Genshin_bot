@@ -6,6 +6,7 @@ import os
 import re
 from functools import partial
 
+import httpx
 from bs4 import BeautifulSoup
 from neonize.utils.enum import ChatPresence, ChatPresenceMedia, Presence
 
@@ -122,12 +123,20 @@ class Event:
         # msg_id = self.id if quote else None
         await self.send_typing_status()
 
-        response = await self.client.reply_message(
-            text,
-            self.message,
-            link_preview=link_preview,
-            reply_privately=reply_privately,
-        )
+        try:
+            response = await self.client.reply_message(
+                text,
+                self.message,
+                link_preview=link_preview,
+                reply_privately=reply_privately,
+            )
+        except httpx.HTTPStatusError:
+            response = await self.client.reply_message(
+                text,
+                self.message,
+                link_preview=False,
+                reply_privately=reply_privately,
+            )
         # self.id = response.ID
         # self.text = text
         # new_jid = jid.build_jid(conf.PHNUMBER)

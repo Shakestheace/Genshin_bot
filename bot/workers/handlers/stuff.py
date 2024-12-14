@@ -143,7 +143,7 @@ async def sanitize_url(event, args, client):
     """
     status_msg = None
     try:
-        if not event.quoted_text or args:
+        if not (event.quoted_text or args):
             return event.reply(sanitize_url.__doc__)
         status_msg = await event.reply("Please wait…")
         if event.quoted_text:
