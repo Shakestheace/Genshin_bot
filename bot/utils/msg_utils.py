@@ -78,7 +78,12 @@ class Event:
         # quotedMessage.conversation]
         self.quoted = self.ext_msg.contextInfo if add_replied else None
         self.quoted_text = (
-            (self.quoted.quotedMessage.conversation or self.quoted.quotedMessage.extendedTextMessage.text) if self.quoted else None
+            (
+                self.quoted.quotedMessage.conversation
+                or self.quoted.quotedMessage.extendedTextMessage.text
+            )
+            if self.quoted
+            else None
         )
         self.reply_to_message = self.get_quoted_msg()
         self.outgoing = message.Info.MessageSource.IsFromMe
