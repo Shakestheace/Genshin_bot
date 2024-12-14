@@ -182,8 +182,14 @@ class Event:
         return construct_event(msg)
 
     async def send_typing_status(self, typing=True):
-        status = ChatPresence.CHAT_PRESENCE_COMPOSING if typing else ChatPresence.CHAT_PRESENCE_PAUSED
-        return await self.send_chat_presence(self.chat.jid, status, ChatPresenceMedia.CHAT_PRESENCE_MEDIA_TEXT)
+        status = (
+            ChatPresence.CHAT_PRESENCE_COMPOSING
+            if typing
+            else ChatPresence.CHAT_PRESENCE_PAUSED
+        )
+        return await self.send_chat_presence(
+            self.chat.jid, status, ChatPresenceMedia.CHAT_PRESENCE_MEDIA_TEXT
+        )
 
     async def upload_file(self, file: bytes):
         response = await self.client.upload(file)
