@@ -6,7 +6,12 @@ from bot.fun.quips import enquip
 from bot.fun.stickers import ran_stick
 from bot.utils.bot_utils import get_json
 from bot.utils.log_utils import logger
-from bot.utils.msg_utils import clean_reply, pm_is_allowed, user_is_allowed, user_is_owner
+from bot.utils.msg_utils import (
+    clean_reply,
+    pm_is_allowed,
+    user_is_allowed,
+    user_is_owner,
+)
 
 meme_list = []
 
@@ -160,7 +165,7 @@ async def sanitize_url(event, args, client):
                 sanitized_links.append(clean_url(url))
             for a, b in zip(urls, sanitized_links):
                 new_msg = new_msg.replace(a, b)
-            return await clean_reply(event,event.reply_to_message, "reply", new_msg)
+            return await clean_reply(event, event.reply_to_message, "reply", new_msg)
         urls = extractor.find_urls(args)
         if not urls:
             return await event.reply(f"*No link found in your message to sanitize*")
