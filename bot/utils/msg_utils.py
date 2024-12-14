@@ -76,7 +76,9 @@ class Event:
         # To do expand quoted; has members [stanzaID, participant,
         # quotedMessage.conversation]
         self.quoted = self.ext_msg.contextInfo if add_replied else None
-        self.quoted_text = self.quoted.quotedMessage.conversation if self.quoted else None
+        self.quoted_text = (
+            self.quoted.quotedMessage.conversation if self.quoted else None
+        )
         self.reply_to_message = self.get_quoted_msg()
         self.outgoing = message.Info.MessageSource.IsFromMe
         self.is_status = message.Info.MessageSource.Chat.User.casefold() == "status"
