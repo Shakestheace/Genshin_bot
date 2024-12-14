@@ -1,8 +1,9 @@
+import random
 from clean_links.clean import clean_url
 from urlextract import URLExtract
 
 from bot.config import bot, conf
-from bot.fun.quips import enquip
+from bot.fun.quips import enquip, enquip4
 from bot.fun.stickers import ran_stick
 from bot.utils.bot_utils import get_json
 from bot.utils.log_utils import logger
@@ -132,10 +133,12 @@ async def sticker_reply(event, args, client):
         me = await bot.client.get_me()
         if not event.text.startswith("@" + me.JID.User):
             return
+        await event.send_typing_status()
         random_sticker = ran_stick()
         await event.reply_sticker(
-            random_sticker, quote=True, name=enquip(), packname=me.PushName
+            random_sticker, quote=True, name=random.choice(enquip(), enquip4()), packname=me.PushName
         )
+        await event.send_typing_status(False)
     except Exception:
         await logger(Exception)
 
