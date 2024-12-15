@@ -24,7 +24,14 @@ from .workers.handlers.manage import (
     rss_handler,
     update_handler,
 )
-from .workers.handlers.stuff import getcmds, getmeme, hello, sanitize_url, sticker_reply, stickerize_image
+from .workers.handlers.stuff import (
+    getcmds,
+    getmeme,
+    hello,
+    sanitize_url,
+    sticker_reply,
+    stickerize_image,
+)
 
 
 @bot.client.event(ConnectedEv)

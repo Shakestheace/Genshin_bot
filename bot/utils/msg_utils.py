@@ -234,7 +234,8 @@ async def download_replied_image(quoted) -> bytes:
     file_length = image.fileLength
     media_type = MediaType.MediaImage
     mms_type = "image"
-    return await bot.client.download_media_with_path(direct_path,
+    return await bot.client.download_media_with_path(
+        direct_path,
         enc_file_hash,
         file_hash,
         media_key,
@@ -242,6 +243,7 @@ async def download_replied_image(quoted) -> bytes:
         media_type,
         mms_type,
     )
+
 
 def user_is_allowed(user: str | int):
     user = str(user)

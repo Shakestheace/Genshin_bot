@@ -210,7 +210,7 @@ async def stickerize_image(event, args, client):
     try:
         if not event.quoted.quotedMessage.imageMessage.URL:
             return await event.reply("*Replied message is not an image.*")
-    
+
         await event.send_typing_status()
         file = await download_replied_image(event.quoted)
         me = await bot.client.get_me()
