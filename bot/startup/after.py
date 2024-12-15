@@ -7,7 +7,7 @@ from bot.utils.gi_utils import enka_update
 from bot.utils.local_db_utils import save_enka_db
 from bot.utils.log_utils import logger
 from bot.utils.msg_utils import send_presence
-from bot.utils.os_utils import file_exists, force_exit, touch
+from bot.utils.os_utils import file_exists, force_exit, re_x, touch
 from bot.utils.rss_utils import scheduler
 
 
