@@ -29,8 +29,8 @@ LOGS.info("=" * 30)
 if not os.path.isdir("enka/"):
     os.mkdir("enka/")
 
-# if file_exists(con_ind):
-# bot.initialized_client = True
+if file_exists(con_ind):
+    bot.initialized_client = True
 
 bot.gift_dict.update({"codes": [], "chats": []})
 

@@ -25,8 +25,7 @@ from .workers.handlers.stuff import getcmds, getmeme, hello, sanitize_url, stick
 
 @bot.client.event(ConnectedEv)
 async def on_connected(_: NewAClient, __: ConnectedEv):
-    if not file_exists(con_ind):
-        touch(con_ind)
+    pass
 
 
 @bot.register("start")
@@ -120,8 +119,7 @@ try:
             bot.client.PairPhone(conf.PH_NUMBER, show_push_notification=True)
         )
     else:
-        pass
-        # loop.run_until_complete(bot.client.connect())
+        loop.run_until_complete(bot.client.connect())
 except Exception:
     LOGS.critical(traceback.format_exc())
     LOGS.critical("Cannot recover from error, exiting…")

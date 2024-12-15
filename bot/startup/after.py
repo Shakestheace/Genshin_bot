@@ -1,13 +1,13 @@
 import signal
 
-from bot import Message, asyncio, bot, conf, jid, sys, version_file
+from bot import Message, asyncio, bot, con_ind, conf, jid, sys, version_file
 from bot.fun.emojis import enmoji, enmoji2
 from bot.fun.quips import enquip, enquip2
 from bot.utils.gi_utils import enka_update
 from bot.utils.local_db_utils import save_enka_db
 from bot.utils.log_utils import logger
 from bot.utils.msg_utils import send_presence
-from bot.utils.os_utils import force_exit
+from bot.utils.os_utils import file_exists, force_exit, touch
 from bot.utils.rss_utils import scheduler
 
 
@@ -46,6 +46,8 @@ async def onrestart():
 
 async def onstart():
     try:
+        if bot.recently_initialized:
+            await asyncio.sleep(10)
         for i in conf.OWNER.split():
             try:
                 await bot.client.send_message(
@@ -74,11 +76,12 @@ async def on_termination():
 
 async def wait_on_client():
     while True:
-        if await bot.client.is_logged_in:
+        try:
+            await bot.client.get_me()
             break
-        else:
+        except Exception:
             pass
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(1)
 
 
 async def on_startup():
@@ -90,10 +93,11 @@ async def on_startup():
                 getattr(signal, signame),
                 lambda: asyncio.create_task(on_termination()),
             )
-        # if not bot.initialized_client:
-        # await logger(e="Bot needs to be restarted to work properly!")
-        # return
         await wait_on_client()
+        if not file_exists(con_ind):
+            touch(con_ind)
+            await logger(e="Restarting…")
+            re_x()
         if len(sys.argv) == 3:
             await onrestart()
         else:
