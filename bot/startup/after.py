@@ -44,17 +44,15 @@ async def onrestart():
         await logger(Exception)
 
 
-async def onstart():
-    try:
-        for i in conf.OWNER.split():
-            try:
-                await bot.client.send_message(
-                    jid.build_jid(i), f"*I'm {enquip()} {enmoji()}*"
-                )
-            except Exception:
-                pass
-    except BaseException:
-        pass
+async def onstart(proper=True):
+    text = "Please restart me."
+    if proper:
+        text = f"*I'm {enquip()} {enmoji()}*"
+    i = conf.OWNER.split()[0]
+    await bot.client.send_message(
+        jid.build_jid(i),
+        text,
+    )
 
 
 async def on_termination():
@@ -82,7 +80,7 @@ async def wait_for_client():
 async def wait_on_client():
     while True:
         try:
-            await bot.client.disconnect()
+            await onstart(False)
             break
         except Exception:
             pass
@@ -101,8 +99,9 @@ async def on_startup():
         if not file_exists(con_ind):
             await wait_on_client()
             touch(con_ind)
-            await logger(e="Restarting…")
-            re_x()
+            await logger(e="Please Restart bot.")
+            #re_x()
+            return
         else:
             await wait_for_client()
         if len(sys.argv) == 3:
