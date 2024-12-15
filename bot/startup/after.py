@@ -44,10 +44,8 @@ async def onrestart():
         await logger(Exception)
 
 
-async def onstart(proper=True):
-    text = "Please restart me."
-    if proper:
-        text = f"*I'm {enquip()} {enmoji()}*"
+async def onstart():
+    text = "*Please restart me.*"
     i = conf.OWNER.split()[0]
     await bot.client.send_message(
         jid.build_jid(i),
@@ -80,7 +78,7 @@ async def wait_for_client():
 async def wait_on_client():
     while True:
         try:
-            await onstart(False)
+            await onstart()
             break
         except Exception:
             pass
