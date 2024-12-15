@@ -76,7 +76,7 @@ async def on_termination():
 
 async def wait_on_client():
     while True:
-        if (rep := await bot.client.is_logged_in):
+        if rep := await bot.client.is_logged_in:
             await logger(e=rep)
             if not file_exists(con_ind):
                 touch(con_ind)
