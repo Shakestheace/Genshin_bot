@@ -90,9 +90,9 @@ async def on_startup():
                 getattr(signal, signame),
                 lambda: asyncio.create_task(on_termination()),
             )
-        if not bot.initialized_client:
-            await logger(e="Bot needs to be restarted to work properly!")
-            return
+        # if not bot.initialized_client:
+            # await logger(e="Bot needs to be restarted to work properly!")
+            # return
         await wait_on_client()
         if len(sys.argv) == 3:
             await onrestart()
