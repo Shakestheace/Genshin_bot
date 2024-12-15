@@ -1,7 +1,19 @@
-from . import LOGS, ConnectedEv, LoggedOutEv, MessageEv, NewAClient, asyncio, bot, con_ind, conf, traceback
+from bot.utils.os_utils import re_x, s_remove
+
+from . import (
+    LOGS,
+    ConnectedEv,
+    LoggedOutEv,
+    MessageEv,
+    NewAClient,
+    asyncio,
+    bot,
+    con_ind,
+    conf,
+    traceback,
+)
 from .startup.after import on_startup
 from .utils.msg_utils import Event, event_handler, on_message
-from bot.utils.os_utils import s_remove, re_x
 from .workers.handlers.dev import bash, eval_message, get_logs
 from .workers.handlers.gi import enka_handler, getgiftcodes, weapon_handler
 from .workers.handlers.manage import (
