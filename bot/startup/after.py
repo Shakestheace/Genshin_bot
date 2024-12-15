@@ -72,6 +72,13 @@ async def on_termination():
     # exit()
 
 
+async def wait_for_client():
+    while True:
+        if await bot.client.is_logged_in:
+            break
+        await asyncio.sleep(0.5)
+
+
 async def wait_on_client():
     while True:
         try:
@@ -91,11 +98,13 @@ async def on_startup():
                 getattr(signal, signame),
                 lambda: asyncio.create_task(on_termination()),
             )
-        await wait_on_client()
         if not file_exists(con_ind):
+            await wait_on_client()
             touch(con_ind)
             await logger(e="Restarting…")
             re_x()
+        else:
+            await wait_for_client()
         if len(sys.argv) == 3:
             await onrestart()
         else:
