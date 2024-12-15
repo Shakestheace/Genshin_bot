@@ -46,8 +46,6 @@ async def onrestart():
 
 async def onstart():
     try:
-        if bot.recently_initialized:
-            await asyncio.sleep(10)
         for i in conf.OWNER.split():
             try:
                 await bot.client.send_message(
@@ -76,10 +74,7 @@ async def on_termination():
 
 async def wait_on_client():
     while True:
-        if rep := await bot.client.is_logged_in:
-            await logger(e=rep)
-            if not file_exists(con_ind):
-                touch(con_ind)
+        if await bot.client.is_logged_in:
             break
         else:
             pass
@@ -95,6 +90,9 @@ async def on_startup():
                 getattr(signal, signame),
                 lambda: asyncio.create_task(on_termination()),
             )
+        if not bot.initialized_client:
+            await logger(e="Bot needs to be restarted to work properly!")
+            return
         await wait_on_client()
         if len(sys.argv) == 3:
             await onrestart()

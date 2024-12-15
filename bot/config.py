@@ -73,7 +73,6 @@ class Runtime_Config:
         self.max_message_length = 4096
         self.offline = False
         self.paused = False
-        self.recently_initialized = True
         self.gift_dict = {}
         self.rss_dict = {}
         self.rss_ran_once = False

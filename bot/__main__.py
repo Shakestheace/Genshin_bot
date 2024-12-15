@@ -1,6 +1,7 @@
-from . import LOGS, ConnectedEv, MessageEv, NewAClient, asyncio, bot, conf, traceback
+from . import LOGS, ConnectedEv, MessageEv, NewAClient, asyncio, bot, con_ind, conf, traceback
 from .startup.after import on_startup
 from .utils.msg_utils import Event, event_handler, on_message
+from .utils.os_utils import file_exists, touch
 from .workers.handlers.dev import bash, eval_message, get_logs
 from .workers.handlers.gi import enka_handler, getgiftcodes, weapon_handler
 from .workers.handlers.manage import (
@@ -14,7 +15,8 @@ from .workers.handlers.stuff import getcmds, getmeme, hello, sanitize_url, stick
 
 @bot.client.event(ConnectedEv)
 async def on_connected(_: NewAClient, __: ConnectedEv):
-    bot.recently_initialized = False
+    if not file_exists(con_ind):
+        touch(con_ind)
 
 
 @bot.register("start")
@@ -108,7 +110,8 @@ try:
             bot.client.PairPhone(conf.PH_NUMBER, show_push_notification=True)
         )
     else:
-        loop.run_until_complete(bot.client.connect())
+        pass
+        # loop.run_until_complete(bot.client.connect())
 except Exception:
     LOGS.critical(traceback.format_exc())
     LOGS.critical("Cannot recover from error, exiting…")
