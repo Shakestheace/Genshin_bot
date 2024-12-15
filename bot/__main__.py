@@ -14,8 +14,7 @@ from .workers.handlers.stuff import getcmds, getmeme, hello, sanitize_url, stick
 
 @bot.client.event(ConnectedEv)
 async def on_connected(_: NewAClient, __: ConnectedEv):
-    # asyncio.create_task(on_startup())
-    pass
+    bot.recently_initialized = False
 
 
 @bot.register("start")

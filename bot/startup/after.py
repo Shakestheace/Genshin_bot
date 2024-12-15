@@ -46,6 +46,8 @@ async def onrestart():
 
 async def onstart():
     try:
+        if bot.recently_initialized:
+            await asyncio.sleep(10)
         for i in conf.OWNER.split():
             try:
                 await bot.client.send_message(
@@ -59,7 +61,7 @@ async def onstart():
 
 async def on_termination():
     try:
-        dead_msg = f"*I'm {enquip2()} {enmoji2()}*"
+        dead_msg = f"*I'm* {enquip2()} {enmoji2()}"
         for i in conf.OWNER.split():
             try:
                 await bot.client.send_message(jid.build_jid(i), dead_msg)
@@ -74,7 +76,8 @@ async def on_termination():
 
 async def wait_on_client():
     while True:
-        if await bot.client.is_logged_in:
+        if (rep := await bot.client.is_logged_in):
+            await logger(e=rep)
             if not file_exists(con_ind):
                 touch(con_ind)
             break
@@ -101,5 +104,6 @@ async def on_startup():
         await send_presence()
         await asyncio.sleep(5)
         await send_presence(False)
+        await logger(e="Bot has started.")
     except Exception:
         await logger(Exception)
