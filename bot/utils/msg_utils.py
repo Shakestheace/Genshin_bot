@@ -8,7 +8,7 @@ from functools import partial
 
 import httpx
 from bs4 import BeautifulSoup
-from neonize.utils.enum import ChatPresence, ChatPresenceMedia, Presence
+from neonize.utils.enum import ChatPresence, ChatPresenceMedia, MediaType, Presence
 
 from bot import (
     Message,
@@ -224,6 +224,24 @@ class Event:
         )
         return construct_event(msg, False)
 
+
+async def download_replied_image(quoted) -> bytes:
+    image = quoted.quotedMessage.imageMessage
+    direct_path = image.directPath
+    enc_file_hash = image.fileEncSHA256
+    file_hash = image.fileSHA256
+    media_key = image.mediaKey
+    file_length = image.fileLength
+    media_type = MediaType.MediaImage
+    mms_type = "image"
+    return await bot.client.download_media_with_path(direct_path,
+        enc_file_hash,
+        file_hash,
+        media_key,
+        file_length,
+        media_type,
+        mms_type,
+    )
 
 def user_is_allowed(user: str | int):
     user = str(user)

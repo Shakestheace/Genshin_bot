@@ -10,6 +10,7 @@ from bot.utils.bot_utils import get_json
 from bot.utils.log_utils import logger
 from bot.utils.msg_utils import (
     clean_reply,
+    download_replied_image,
     pm_is_allowed,
     user_is_allowed,
     user_is_owner,
@@ -103,6 +104,7 @@ async def getcmds(event, args, client):
 {pre}meme - *Get a random meme*
 {pre}codes - *Get lastest giftcodes*
 {pre}sanitize - *Sanitize link or message*
+{pre}sticker - *Turns images to stickers*
 {pre}bash - *[Dev.] Run bash commands*
 {pre}eval - *[Dev.] Evaluate python commands*
 {pre}rss - *[Owner] Setup bot to auto post RSS feeds*
@@ -154,6 +156,12 @@ async def sanitize_url(event, args, client):
     Can also receive a link as argument
     """
     status_msg = None
+    user = event.from_user.id
+    if not user_is_owner(user):
+        if not pm_is_allowed(event):
+            return
+        if not user_is_allowed(user):
+            return
     try:
         if not (event.quoted_text or args):
             return await event.reply(f"{sanitize_url.__doc__}")
@@ -185,3 +193,33 @@ async def sanitize_url(event, args, client):
     finally:
         if status_msg:
             await status_msg.delete()
+
+
+async def stickerize_image(event, args, client):
+    """
+    Turns replied image to sticker.
+    Args:
+        Name of sticker
+    """
+    user = event.from_user.id
+    if not user_is_owner(user):
+        if not pm_is_allowed(event):
+            return
+        if not user_is_allowed(user):
+            return
+    try:
+        if not event.quoted.quotedMessage.imageMessage.URL:
+            return await event.reply("*Replied message is not an image.*")
+    
+        await event.send_typing_status()
+        file = await download_replied_image(event.quoted)
+        me = await bot.client.get_me()
+        return await event.reply_sticker(
+            file,
+            quote=True,
+            name=(args or random.choice((enquip(), enquip4()))),
+            packname=me.PushName,
+        )
+        await event.send_typing_status(False)
+    except Exception:
+        await logger(Exception)

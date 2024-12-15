@@ -24,7 +24,7 @@ from .workers.handlers.manage import (
     rss_handler,
     update_handler,
 )
-from .workers.handlers.stuff import getcmds, getmeme, hello, sanitize_url, sticker_reply
+from .workers.handlers.stuff import getcmds, getmeme, hello, sanitize_url, sticker_reply, stickerize_image
 
 
 @bot.client.event(ConnectedEv)
@@ -94,6 +94,11 @@ async def _(client: NewAClient, message: Event):
 @bot.register("sanitize")
 async def _(client: NewAClient, message: Event):
     await event_handler(message, sanitize_url)
+
+
+@bot.register("sticker")
+async def _(client: NewAClient, message: Event):
+    await event_handler(message, stickerize_image)
 
 
 @bot.register("rss")
