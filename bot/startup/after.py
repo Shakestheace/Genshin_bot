@@ -113,6 +113,5 @@ async def on_startup():
         await send_presence()
         await asyncio.sleep(5)
         await send_presence(False)
-        await logger(e="Bot has started.")
     except Exception:
         await logger(Exception)
