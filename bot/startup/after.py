@@ -77,7 +77,7 @@ async def on_termination():
 async def wait_on_client():
     while True:
         try:
-            await bot.client.get_me()
+            await bot.client.disconnect()
             break
         except Exception:
             pass
