@@ -1,6 +1,7 @@
-from . import LOGS, ConnectedEv, MessageEv, NewAClient, asyncio, bot, conf, traceback
+from . import LOGS, ConnectedEv, LoggedOutEv, MessageEv, NewAClient, asyncio, bot, con_ind, conf, traceback
 from .startup.after import on_startup
 from .utils.msg_utils import Event, event_handler, on_message
+from bot.utils.os_utils import s_remove, re_x
 from .workers.handlers.dev import bash, eval_message, get_logs
 from .workers.handlers.gi import enka_handler, getgiftcodes, weapon_handler
 from .workers.handlers.manage import (
@@ -15,6 +16,14 @@ from .workers.handlers.stuff import getcmds, getmeme, hello, sanitize_url, stick
 @bot.client.event(ConnectedEv)
 async def on_connected(_: NewAClient, __: ConnectedEv):
     LOGS.info("Bot has started.")
+
+
+@bot.client.event(LoggedOutEv)
+async def on_logout(_: NewAClient, __: LoggedOutEv):
+    s_remove(con_ind)
+    LOGS.info("Bot has been logged out.")
+    LOGS.info("Restarting…")
+    re_x()
 
 
 @bot.register("start")
