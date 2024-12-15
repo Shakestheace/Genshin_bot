@@ -58,11 +58,11 @@ async def onstart(proper=True):
 async def on_termination():
     try:
         dead_msg = f"*I'm* {enquip2()} {enmoji2()}"
-        for i in conf.OWNER.split():
-            try:
-                await bot.client.send_message(jid.build_jid(i), dead_msg)
-            except Exception:
-                pass
+        i = conf.OWNER.split()[0]
+        await bot.client.send_message(
+            jid.build_jid(i),
+            dead_msg,
+        )
     except Exception:
         pass
     # More cleanup code?
