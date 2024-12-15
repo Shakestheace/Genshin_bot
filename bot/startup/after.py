@@ -46,8 +46,6 @@ async def onrestart():
 
 async def onstart():
     try:
-        if bot.recently_initialized:
-            await asyncio.sleep(10)
         for i in conf.OWNER.split():
             try:
                 await bot.client.send_message(
@@ -101,7 +99,7 @@ async def on_startup():
         if len(sys.argv) == 3:
             await onrestart()
         else:
-            await asyncio.sleep(1)
+            await asyncio.sleep(3)
             await onstart()
         await send_presence()
         await asyncio.sleep(5)
