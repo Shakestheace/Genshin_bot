@@ -107,6 +107,8 @@ async def on_startup():
         else:
             await asyncio.sleep(3)
             await onstart()
+            await logger(e="Please Restart bot.")
+            return
         await send_presence()
         await asyncio.sleep(5)
         await send_presence(False)
