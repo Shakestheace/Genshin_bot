@@ -10,6 +10,7 @@ from . import (
     bot,
     con_ind,
     conf,
+    time,
     traceback,
 )
 from .startup.after import on_startup
@@ -36,6 +37,7 @@ async def on_logout(_: NewAClient, __: LoggedOutEv):
     s_remove(con_ind)
     LOGS.info("Bot has been logged out.")
     LOGS.info("Restarting…")
+    time.sleep(10)
     re_x()
 
 
