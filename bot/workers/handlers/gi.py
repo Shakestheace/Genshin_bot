@@ -433,7 +433,7 @@ async def getgiftcodes(event, args, client):
         return await event.reply(f"*Error:*\n{e}")
 
 
-async get_events(event, args, client):
+async def get_events(event, args, client):
     """
     Get list of current and upcoming genshin events 
     """
