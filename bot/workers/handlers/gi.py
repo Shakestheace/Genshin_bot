@@ -527,7 +527,7 @@ async def get_events(event, args, client):
             if dict_.get("upcoming"):
                 tl = dict_['start_time'] - time.time()
             else:
-                tl = dict_['end_time] - time.time()
+                tl = dict_['end_time'] - time.time()
             msg += f"\n*Time left:* *{time_formatter(tl)}*"
         await event.reply(msg)
     except Exception:
