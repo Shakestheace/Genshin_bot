@@ -532,7 +532,7 @@ async def get_events(event, args, client):
             msg += f"\n*Type:* {dict_['type_name']}"
             if desc := dict_.get("description"):
                 if "\\n" in desc:
-                    desc = desc.encode().decode('unicode_escape')
+                    desc = desc.encode().decode("unicode_escape")
             msg += f"\n{desc}" if desc else str()
             msg += (
                 f"\n*Rewards:* {get_rewards(dict_['rewards'])}"
