@@ -469,7 +469,7 @@ async def get_events(event, args, client):
         items = tables[0].find_all("td")
         for item in items:
             if value := item.find("img"):
-                temp_dict.update({"name": value.get("alt")})
+                temp_dict.update({"name": value.getText()})
             elif value := item.get("data-sort-value"):
                 svalue = get_timestamp(value[: len(value) // 2])
                 evalue = get_timestamp(value[len(value) // 2 :])
@@ -519,10 +519,11 @@ async def get_events(event, args, client):
             dict_ = e.get(name)
             msg += f"\n\n*⁍ {dict_['name']}*"
             msg += f"\n*Type:* {dict_['type_name']}"
-            msg += f"\n{dict_['description']}"
-            msg += f"\n{get_rewards(dict_['rewards'])}"
-            msg += f"\nStart date:{get_date_from_ts(dict_['start_time'])}"
-            msg += f"\nEnd date:{get_date_from_ts(dict_['end_time'])}"
+            desc = dict_['description'].replace("\\\\", "\\") if dict_['description'] else str()
+            msg += f"\n{desc}" if desc else str()
+            msg += f"\n*Rewards:* {get_rewards(dict_['rewards'])}" if get_rewards(dict_['rewards']) else str()
+            msg += f"\nStart date: {get_date_from_ts(dict_['start_time'])}"
+            msg += f"\nEnd date: {get_date_from_ts(dict_['end_time'])}"
             if dict_.get("upcoming"):
                 tl = dict_["start_time"] - time.time()
             else:
