@@ -472,8 +472,8 @@ async def get_events(event, args, client):
                 temp_dict.update({"end_time": evalue})
             else:
                 value = item.getText()
-                temp_dict.update("type")
-                current_list.append({temp_dict.get("name"): temp_dict)
+                temp_dict.update({"type_name": value})
+                current_list.append({temp_dict.get("name"): temp_dict})
                 temp_dict = {}
         
         
@@ -489,7 +489,7 @@ async def get_events(event, args, client):
                 temp_dict.update({"end_time": evalue})
             else:
                 value = item.getText()
-                temp_dict.update("type")
+                temp_dict.update({"type_name": value})
                 upcoming_list.append({temp_dict.get("name"): temp_dict, "upcoming": True})
                 temp_dict = {}
         
@@ -512,15 +512,16 @@ async def get_events(event, args, client):
             name = list(e.keys())[0]
             dict_ = e.get(name)
             msg += f"\n\n*⁍ {dict_['name']}*"
+            msg += f"\n*Type:* {dict_['type_name']}"
             msg += f"\n{dict_['description']}"
-            msg += f"\n {get_rewards(dict_[rewards])}"
-            msg += f"\n Start date:{date_from_ts(dict_["start_time"])}"
-            msg += f"\n End date:{date_from_ts(dict_["end_time"])}"
+            msg += f"\n{get_rewards(dict_[rewards])}"
+            msg += f"\nStart date:{date_from_ts(dict_["start_time"])}"
+            msg += f"\nEnd date:{date_from_ts(dict_["end_time"])}"
             if dict_.get("upcoming"):
                 tl = dict_["start_time"] - time.time()
             else:
                 tl = dict_["end_time"] - time.time()
-            msg += f"\n *Time left:* *{time_formatter(tl)}*"
+            msg += f"\n*Time left:* *{time_formatter(tl)}*"
         await event.reply(msg)
     except Exception:
         await logger(Exception)
