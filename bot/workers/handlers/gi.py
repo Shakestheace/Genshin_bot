@@ -8,7 +8,13 @@ from bs4 import BeautifulSoup
 from PIL import Image
 
 from bot.config import bot
-from bot.utils.bot_utils import get_date_from_ts, get_json, get_text, get_timestamp, time_formatter
+from bot.utils.bot_utils import (
+    get_date_from_ts,
+    get_json,
+    get_text,
+    get_timestamp,
+    time_formatter,
+)
 from bot.utils.db_utils import save2db2
 from bot.utils.gi_utils import (
     async_dl,
@@ -435,7 +441,7 @@ async def getgiftcodes(event, args, client):
 
 async def get_events(event, args, client):
     """
-    Get list of current and upcoming genshin events 
+    Get list of current and upcoming genshin events
     """
     user = event.from_user.id
     if not user_is_owner(user):
@@ -449,7 +455,7 @@ async def get_events(event, args, client):
         response = await get_gi_info(get=api)
         events = response.get(events)
         web = await get_text(link)
-        soup = BeautifulSoup(web, 'html.parser')
+        soup = BeautifulSoup(web, "html.parser")
         tables = soup.find_all("table", class_="wikitable sortable")
         current_list = []
         upcoming_list = []
@@ -459,15 +465,15 @@ async def get_events(event, args, client):
         if events:
             for event in events:
                 event_list.appens({event.name: event})
-    
+
         # Get Current Events
         items = tables[0].find_all("td")
         for item in items:
             if value := item.find("img"):
                 temp_dict.update({"name": value.get("alt")})
             elif value := item.get("data-sort-value"):
-                svalue = get_timestamp(value[:len(value)//2])
-                evalue = get_timestamp(value[len(value)//2:])
+                svalue = get_timestamp(value[: len(value) // 2])
+                evalue = get_timestamp(value[len(value) // 2 :])
                 temp_dict.update({"start_time": svalue})
                 temp_dict.update({"end_time": evalue})
             else:
@@ -475,25 +481,26 @@ async def get_events(event, args, client):
                 temp_dict.update({"type_name": value})
                 current_list.append({temp_dict.get("name"): temp_dict})
                 temp_dict = {}
-        
-        
+
         # Get Upcoming Events
         items = tables[1].find_all("td")
         for item in items:
             if value := item.find("img"):
                 temp_dict.update({"name": value.get("alt")})
             elif value := item.get("data-sort-value"):
-                svalue = get_timestamp(value[:len(value)//2])
-                evalue = get_timestamp(value[len(value)//2:])
+                svalue = get_timestamp(value[: len(value) // 2])
+                evalue = get_timestamp(value[len(value) // 2 :])
                 temp_dict.update({"start_time": svalue})
                 temp_dict.update({"end_time": evalue})
             else:
                 value = item.getText()
                 temp_dict.update({"type_name": value})
-                upcoming_list.append({temp_dict.get("name"): temp_dict, "upcoming": True})
+                upcoming_list.append(
+                    {temp_dict.get("name"): temp_dict, "upcoming": True}
+                )
                 temp_dict = {}
-        
-        # Compare and combine events from different sources 
+
+        # Compare and combine events from different sources
         for e in event_list:
             name = list(e.keys())[0]
             for l in upcoming_list:
@@ -525,8 +532,8 @@ async def get_events(event, args, client):
         await event.reply(msg)
     except Exception:
         await logger(Exception)
-        
-        
+
+
 def get_stuff(name):
     msg = str()
     for thing in something:
@@ -539,7 +546,6 @@ def get_rewards(rewards):
     msg = str()
     for reward in rewards:
         msg += reward["name"]
-        msg += f" x {reward['amount']}" if reward['amount'] else str
+        msg += f" x {reward['amount']}" if reward["amount"] else str
         msg += ", "
     return msg.strip(", ")
-        

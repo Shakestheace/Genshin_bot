@@ -1,11 +1,11 @@
 import asyncio
 import datetime
 import itertools
-import pytz
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 
 import aiohttp
+import pytz
 import requests
 
 from bot import LOGS, bot, telegraph_errors, time
@@ -105,14 +105,22 @@ async def get_text(link):
         result = await requests.get(link)
         return await result.text()
 
-tz = pytz.timezone('Africa/Lagos')
+
+tz = pytz.timezone("Africa/Lagos")
+
 
 def get_timestamp(date: str):
-    return datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S").replace(tzinfo=tz).timestamp()
+    return (
+        datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+        .replace(tzinfo=tz)
+        .timestamp()
+    )
+
 
 def get_date_from_ts(timestamp):
-    date = datetime.datetime.fromtimestamp(timestamp,tz)
+    date = datetime.datetime.fromtimestamp(timestamp, tz)
     return date.strftime("%d %b %Y %H:%M %p")
+
 
 def time_formatter(seconds: float) -> str:
     """humanize time"""
