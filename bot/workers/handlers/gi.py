@@ -7,7 +7,13 @@ from bs4 import BeautifulSoup
 from PIL import Image
 
 from bot.config import bot
-from bot.utils.bot_utils import get_date_from_ts, get_json, get_text, get_timestamp, time_formatter
+from bot.utils.bot_utils import (
+    get_date_from_ts,
+    get_json,
+    get_text,
+    get_timestamp,
+    time_formatter,
+)
 from bot.utils.db_utils import save2db2
 from bot.utils.gi_utils import (
     async_dl,
