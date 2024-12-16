@@ -438,6 +438,46 @@ async def getgiftcodes(event, args, client):
         return await event.reply(f"*Error:*\n{e}")
 
 
+async def send_verbose_event(event_list, event, reply):
+    chain = event
+    for e in event_list:
+        name = list(e.keys())[0]
+        dict_ = e.get(name)
+        if dict_["end_time"] < time.time():
+            continue
+        link = dict_.get("link")
+        msg = f"*{dict_['name']}*"
+        msg += f"\n\n*Type:* {dict_['type_name']}"
+        if desc := dict_.get("description"):
+            if "\\n" in desc:
+                desc = desc.encode().decode("unicode_escape")
+        msg += f"\n\n*Description:* {desc}" if desc else str()
+        msg += (
+            f"\n\n*Rewards:* {get_rewards(dict_['rewards'])}"
+            if get_rewards(dict_.get("rewards", []))
+            else str()
+        )
+        msg += f"\n\n*Start date:* {get_date_from_ts(dict_['start_time'])}"
+        msg += f"\n*End date:* {get_date_from_ts(dict_['end_time'])}"
+        if dict_.get("upcoming"):
+            strt = "Starts in:"
+            tl = dict_["start_time"] - time.time()
+        else:
+            strt = "Time left:"
+            tl = dict_["end_time"] - time.time()
+        msg += f"\n\n*{strt}* *{time_formatter(tl)}*"
+        if link:
+            chain = await clean_reply(
+                chain, reply, "reply_photo", photo=link, caption=msg,
+            )
+        else:
+            chain = await clean_reply(
+                chain, reply, "reply", msg
+            )
+        reply = None
+        await asyncio.sleep(3)
+
+
 async def get_events(event, args, client):
     """
     Get list of current and upcoming genshin events
@@ -470,7 +510,11 @@ async def get_events(event, args, client):
         for item in items:
             if value := item.find("img"):
                 temp_dict.update({"name": item.getText()})
-                temp_dict.update({"link": value.get("src")})
+                link = value.get("src")
+                if link:
+                    index = link.find('.png')
+                    link = link[:index + 4]
+                temp_dict.update({"link": link})
             elif value := item.get("data-sort-value"):
                 svalue = get_timestamp(value[: len(value) // 2])
                 evalue = get_timestamp(value[len(value) // 2 :])
@@ -487,7 +531,11 @@ async def get_events(event, args, client):
         for item in items:
             if value := item.find("img"):
                 temp_dict.update({"name": value.get("alt")})
-                temp_dict.update({"link": value.get("src")})
+                link = value.get("src")
+                if link:
+                    index = link.find('.png')
+                    link = link[:index + 4]
+                temp_dict.update({"link": link})
             elif value := item.get("data-sort-value"):
                 svalue = get_timestamp(value[: len(value) // 2])
                 evalue = get_timestamp(value[len(value) // 2 :])
@@ -522,6 +570,8 @@ async def get_events(event, args, client):
             if not present:
                 event_list.append(c)
 
+        if args == "-v":
+            return await send_verbose_event(event_list, event, event.reply_to_message)
         msg = "*List of Current & Upcoming Events:*"
         for e in event_list:
             name = list(e.keys())[0]
