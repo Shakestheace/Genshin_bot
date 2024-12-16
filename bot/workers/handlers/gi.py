@@ -495,9 +495,9 @@ async def get_events(event, args, client):
                 temp_dict.update({"end_time": evalue})
             else:
                 value = item.getText()
-                temp_dict.update({"type_name": value})
+                temp_dict.update({"type_name": value, "upcoming": True})
                 upcoming_list.append(
-                    {temp_dict.get("name"): temp_dict, "upcoming": True}
+                    {temp_dict.get("name"): temp_dict}
                 )
                 temp_dict = {}
 
@@ -524,10 +524,12 @@ async def get_events(event, args, client):
             if not present:
                 event_list.append(c)
 
-        msg = "*Current Events:*"
+        msg = "*List of Current & Upcoming Events:*"
         for e in event_list:
             name = list(e.keys())[0]
             dict_ = e.get(name)
+            if dict_["end_time"] < time.time():
+                continue
             msg += f"\n\n*⁍ {dict_['name']}*"
             msg += f"\n*Type:* {dict_['type_name']}"
             if desc := dict_.get("description"):
