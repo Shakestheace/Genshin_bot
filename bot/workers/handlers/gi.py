@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from PIL import Image
 
 from bot.config import bot
-from bot.utils.bot_utils import get_json, get_text, get_timestamp, time_formatter
+from bot.utils.bot_utils import get_date_from_ts, get_json, get_text, get_timestamp, time_formatter
 from bot.utils.db_utils import save2db2
 from bot.utils.gi_utils import (
     async_dl,
@@ -452,12 +452,12 @@ async def get_events(event, args, client):
         tables = soup.find_all("table", class_="wikitable sortable")
         current_list = []
         upcoming_list = []
-        event_list = {}
+        event_list = []
         temp_dict = {}
         # Build initially event list
         if events:
-            for event in events:
-                event_list.append({event.name: event})
+            for event_ in events:
+                event_list.append({event_.get("name"): event_})
 
         # Get Current Events
         items = tables[0].find_all("td")
@@ -514,9 +514,9 @@ async def get_events(event, args, client):
             msg += f"\n\n*⁍ {dict_['name']}*"
             msg += f"\n*Type:* {dict_['type_name']}"
             msg += f"\n{dict_['description']}"
-            msg += f"\n{get_rewards(dict_[rewards])}"
-            msg += f"\nStart date:{date_from_ts(dict_['start_time'])}"
-            msg += f"\nEnd date:{date_from_ts(dict_['end_time'])}"
+            msg += f"\n{get_rewards(dict_['rewards'])}"
+            msg += f"\nStart date:{get_date_from_ts(dict_['start_time'])}"
+            msg += f"\nEnd date:{get_date_from_ts(dict_['end_time'])}"
             if dict_.get("upcoming"):
                 tl = dict_["start_time"] - time.time()
             else:
@@ -539,6 +539,6 @@ def get_rewards(rewards):
     msg = str()
     for reward in rewards:
         msg += reward["name"]
-        msg += f" x {reward['amount']}" if reward["amount"] else str
+        msg += f" x {reward['amount']}" if reward["amount"] else str()
         msg += ", "
     return msg.strip(", ")
