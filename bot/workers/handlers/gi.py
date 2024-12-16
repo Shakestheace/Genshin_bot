@@ -457,7 +457,7 @@ async def get_events(event, args, client):
         # Build initially event list
         if events:
             for event in events:
-                event_list.appens({event.name: event})
+                event_list.append({event.name: event})
 
         # Get Current Events
         items = tables[0].find_all("td")
