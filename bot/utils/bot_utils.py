@@ -1,5 +1,7 @@
 import asyncio
+import datetime
 import itertools
+import pytz
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 
@@ -96,3 +98,31 @@ async def get_json(link):
     async with aiohttp.ClientSession() as requests:
         result = await requests.get(link)
         return await result.json()
+
+
+async def get_text(link):
+    async with aiohttp.ClientSession() as requests:
+        result = await requests.get(link)
+        return await result.text()
+
+tz = pytz.timezone('Africa/Lagos')
+
+def get_timestamp(date: str):
+    return datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S").replace(tzinfo=tz).timestamp()
+
+def get_date_from_ts(timestamp):
+    date = datetime.datetime.fromtimestamp(timestamp,tz)
+    return date.strftime("%d %b %Y %H:%M %p")
+
+def time_formatter(seconds: float) -> str:
+    """humanize time"""
+    minutes, seconds = divmod(int(seconds), 60)
+    hours, minutes = divmod(minutes, 60)
+    days, hours = divmod(hours, 24)
+    tmp = (
+        ((str(days) + "d, ") if days else "")
+        + ((str(hours) + "h, ") if hours else "")
+        + ((str(minutes) + "m, ") if minutes else "")
+        + ((str(seconds) + "s, ") if seconds else "")
+    )
+    return tmp[:-2]

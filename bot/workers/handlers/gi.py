@@ -1,12 +1,14 @@
 import asyncio
+import datetime
 import io
 import itertools
+import time
 
 from bs4 import BeautifulSoup
 from PIL import Image
 
 from bot.config import bot
-from bot.utils.bot_utils import get_json
+from bot.utils.bot_utils import get_date_from_ts, get_json, get_text, get_timestamp, time_formatter
 from bot.utils.db_utils import save2db2
 from bot.utils.gi_utils import (
     async_dl,
@@ -429,3 +431,114 @@ async def getgiftcodes(event, args, client):
     except Exception as e:
         await logger(Exception)
         return await event.reply(f"*Error:*\n{e}")
+
+
+async get_events(event, args, client):
+    """
+    Get list of current and upcoming genshin events 
+    """
+    user = event.from_user.id
+    if not user_is_owner(user):
+        if not pm_is_allowed(event):
+            return
+        if not user_is_allowed(user):
+            return
+    try:
+        api = "https://api.ennead.cc/mihoyo/genshin/calendar"
+        link = "https://genshin-impact.fandom.com/wiki/Event"
+        response = await get_gi_info(get=api)
+        events = response.get(events)
+        web = await get_text(link)
+        soup = BeautifulSoup(web, 'html.parser')
+        tables = soup.find_all("table", class_="wikitable sortable")
+        current_list = []
+        upcoming_list = []
+        event_list = {}
+        temp_dict = {}
+        # Build initially event list
+        if events:
+            for event in events:
+                event_list.appens({event.name: event})
+    
+        # Get Current Events
+        items = tables[0].find_all("td")
+        for item in items:
+            if value := item.find("img"):
+                temp_dict.update({"name": value.get("alt")})
+            elif value := item.get("data-sort-value"):
+                svalue = get_timestamp(value[:len(value)//2])
+                evalue = get_timestamp(value[len(value)//2:])
+                temp_dict.update({"start_time": svalue})
+                temp_dict.update({"end_time": evalue})
+            else:
+                value = item.getText()
+                temp_dict.update("type")
+                current_list.append({temp_dict.get("name"): temp_dict)
+                temp_dict = {}
+        
+        
+        # Get Upcoming Events
+        items = tables[1].find_all("td")
+        for item in items:
+            if value := item.find("img"):
+                temp_dict.update({"name": value.get("alt")})
+            elif value := item.get("data-sort-value"):
+                svalue = get_timestamp(value[:len(value)//2])
+                evalue = get_timestamp(value[len(value)//2:])
+                temp_dict.update({"start_time": svalue})
+                temp_dict.update({"end_time": evalue})
+            else:
+                value = item.getText()
+                temp_dict.update("type")
+                upcoming_list.append({temp_dict.get("name"): temp_dict, "upcoming": True})
+                temp_dict = {}
+        
+        # Compare and combine events from different sources 
+        for e in event_list:
+            name = list(e.keys())[0]
+            for l in upcoming_list:
+                if wiki_ver := l.get(name):
+                    if e[name].get("end_time"):
+                        wiki_ver.pop("upcoming")
+                    e[name].update(wiki_ver)
+                    continue
+            for c in current_list:
+                if wiki_ver := c.get(name):
+                    e[name].update(wiki_ver)
+                    continue
+
+        msg = "*Current Events:*"
+        for e in event_list:
+            name = list(e.keys())[0]
+            dict_ = e.get(name)
+            msg += f"\n\n*⁍ {dict_['name']}*"
+            msg += f"\n{dict_['description']}"
+            msg += f"\n {get_rewards(dict_[rewards])}"
+            msg += f"\n Start date:{date_from_ts(dict_["start_time"])}"
+            msg += f"\n End date:{date_from_ts(dict_["end_time"])}"
+            if dict_.get("upcoming"):
+                tl = dict_["start_time"] - time.time()
+            else:
+                tl = dict_["end_time"] - time.time()
+            msg += f"\n *Time left:* *{time_formatter(tl)}*"
+        await event.reply(msg)
+    except Exception:
+        await logger(Exception)
+        
+        
+def get_stuff(name):
+    msg = str()
+    for thing in something:
+        msg += thing[name]
+        msg += ", "
+    return msg.strip(", ")
+
+
+def get_rewards(rewards):
+    msg = str()
+    for reward in rewards:
+        msg += reward["name"]
+        msg += f" x {reward['amount']}" if reward['amount'] else str
+        msg += ", "
+    return msg.strip(", ")
+        

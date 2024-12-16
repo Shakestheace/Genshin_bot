@@ -103,6 +103,7 @@ async def getcmds(event, args, client):
 {pre}weapon - *Fetch weapon details*
 {pre}meme - *Get a random meme*
 {pre}codes - *Get lastest giftcodes*
+{pre}events - *Get current and upcoming events*
 {pre}sanitize - *Sanitize link or message*
 {pre}sticker - *Turns images to stickers*
 {pre}bash - *[Dev.] Run bash commands*
