@@ -470,6 +470,7 @@ async def get_events(event, args, client):
         for item in items:
             if value := item.find("img"):
                 temp_dict.update({"name": item.getText()})
+                temp_dict.update({"link": value.get("src")})
             elif value := item.get("data-sort-value"):
                 svalue = get_timestamp(value[: len(value) // 2])
                 evalue = get_timestamp(value[len(value) // 2 :])
@@ -529,13 +530,11 @@ async def get_events(event, args, client):
             dict_ = e.get(name)
             msg += f"\n\n*⁍ {dict_['name']}*"
             msg += f"\n*Type:* {dict_['type_name']}"
-            desc = dict_["description"] if dict_["description"] else str()
-            msg += (
-                f"\n{desc.encode().decode('unicode_escape')}" if "\\n" in desc else desc
-            )
+            desc = dict_['description'] if dict_.get('description') else str()
+            msg += f"\n{desc.encode().decode('unicode_escape')}" if "\\n" in desc else desc
             msg += (
                 f"\n*Rewards:* {get_rewards(dict_['rewards'])}"
-                if get_rewards(dict_["rewards"])
+                if get_rewards(dict_.get("rewards", []))
                 else str()
             )
             msg += f"\nStart date: {get_date_from_ts(dict_['start_time'])}"
