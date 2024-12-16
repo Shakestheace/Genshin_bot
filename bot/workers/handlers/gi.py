@@ -496,9 +496,7 @@ async def get_events(event, args, client):
             else:
                 value = item.getText()
                 temp_dict.update({"type_name": value, "upcoming": True})
-                upcoming_list.append(
-                    {temp_dict.get("name"): temp_dict}
-                )
+                upcoming_list.append({temp_dict.get("name"): temp_dict})
                 temp_dict = {}
 
         # Compare and combine events from different sources
