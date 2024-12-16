@@ -468,12 +468,14 @@ async def send_verbose_event(event_list, event, reply):
         msg += f"\n\n*{strt}* *{time_formatter(tl)}*"
         if link:
             chain = await clean_reply(
-                chain, reply, "reply_photo", photo=link, caption=msg,
+                chain,
+                reply,
+                "reply_photo",
+                photo=link,
+                caption=msg,
             )
         else:
-            chain = await clean_reply(
-                chain, reply, "reply", msg
-            )
+            chain = await clean_reply(chain, reply, "reply", msg)
         reply = None
         await asyncio.sleep(3)
 
@@ -512,8 +514,8 @@ async def get_events(event, args, client):
                 temp_dict.update({"name": item.getText()})
                 link = value.get("src")
                 if link:
-                    index = link.find('.png')
-                    link = link[:index + 4]
+                    index = link.find(".png")
+                    link = link[: index + 4]
                 temp_dict.update({"link": link})
             elif value := item.get("data-sort-value"):
                 svalue = get_timestamp(value[: len(value) // 2])
@@ -533,8 +535,8 @@ async def get_events(event, args, client):
                 temp_dict.update({"name": value.get("alt")})
                 link = value.get("src")
                 if link:
-                    index = link.find('.png')
-                    link = link[:index + 4]
+                    index = link.find(".png")
+                    link = link[: index + 4]
                 temp_dict.update({"link": link})
             elif value := item.get("data-sort-value"):
                 svalue = get_timestamp(value[: len(value) // 2])
