@@ -441,6 +441,7 @@ async def getgiftcodes(event, args, client):
 async def send_verbose_event(event_list, event, reply):
     chain = event
     for e in event_list:
+        await event.send_typing_status()
         name = list(e.keys())[0]
         dict_ = e.get(name)
         if dict_["end_time"] < time.time():
@@ -466,6 +467,7 @@ async def send_verbose_event(event_list, event, reply):
             strt = "Time left:"
             tl = dict_["end_time"] - time.time()
         msg += f"\n\n*{strt}* *{time_formatter(tl)}*"
+        await event.send_typing_status(False)
         if link:
             chain = await clean_reply(
                 chain,
@@ -483,7 +485,10 @@ async def send_verbose_event(event_list, event, reply):
 async def get_events(event, args, client):
     """
     Get list of current and upcoming genshin events
+    Argument:
+        -v: Get events with images
     """
+    status = None
     user = event.from_user.id
     if not user_is_owner(user):
         if not pm_is_allowed(event):
@@ -491,8 +496,10 @@ async def get_events(event, args, client):
         if not user_is_allowed(user):
             return
     try:
+        status = await event.reply("*Fetching events…*")
         api = "https://api.ennead.cc/mihoyo/genshin/calendar"
         link = "https://genshin-impact.fandom.com/wiki/Event"
+        await event.send_typing_status()
         response = await get_gi_info(get=api)
         events = response.get("events")
         web = await get_text(link)
@@ -512,7 +519,9 @@ async def get_events(event, args, client):
         for item in items:
             if value := item.find("img"):
                 temp_dict.update({"name": item.getText()})
-                link = value.get("src")
+                link = value.get("src", str())
+                if link.startswith("data"):
+                    link = value.get("data-src", str())
                 if link:
                     index = link.find(".png")
                     link = link[: index + 4]
@@ -572,8 +581,13 @@ async def get_events(event, args, client):
             if not present:
                 event_list.append(c)
 
+        await event.send_typing_status(False)
+        await status.edit("*Listing Current & Upcoming Events…*")
+
         if args == "-v":
             return await send_verbose_event(event_list, event, event.reply_to_message)
+
+        await event.send_typing_status()
         msg = "*List of Current & Upcoming Events:*"
         for e in event_list:
             name = list(e.keys())[0]
@@ -600,9 +614,14 @@ async def get_events(event, args, client):
                 strt = "Time left:"
                 tl = dict_["end_time"] - time.time()
             msg += f"\n*{strt}* *{time_formatter(tl)}*"
+        await event.send_typing_status(False)
         await event.reply(msg)
     except Exception:
         await logger(Exception)
+    finally:
+        if status:
+            await asyncio.sleep(3)
+            await status.delete()
 
 
 def get_stuff(name):
