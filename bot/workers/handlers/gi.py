@@ -446,7 +446,7 @@ async def get_events(event, args, client):
         api = "https://api.ennead.cc/mihoyo/genshin/calendar"
         link = "https://genshin-impact.fandom.com/wiki/Event"
         response = await get_gi_info(get=api)
-        events = response.get(events)
+        events = response.get("events")
         web = await get_text(link)
         soup = BeautifulSoup(web, "html.parser")
         tables = soup.find_all("table", class_="wikitable sortable")
