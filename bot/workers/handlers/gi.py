@@ -522,12 +522,12 @@ async def get_events(event, args, client):
             msg += f"\n*Type:* {dict_['type_name']}"
             msg += f"\n{dict_['description']}"
             msg += f"\n{get_rewards(dict_[rewards])}"
-            msg += f"\nStart date:{date_from_ts(dict_["start_time"])}"
-            msg += f"\nEnd date:{date_from_ts(dict_["end_time"])}"
+            msg += f"\nStart date:{date_from_ts(dict_['start_time'])}"
+            msg += f"\nEnd date:{date_from_ts(dict_['end_time'])}"
             if dict_.get("upcoming"):
-                tl = dict_["start_time"] - time.time()
+                tl = dict_['start_time'] - time.time()
             else:
-                tl = dict_["end_time"] - time.time()
+                tl = dict_['end_time] - time.time()
             msg += f"\n*Time left:* *{time_formatter(tl)}*"
         await event.reply(msg)
     except Exception:
