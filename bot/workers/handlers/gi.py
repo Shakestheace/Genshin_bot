@@ -441,203 +441,149 @@ async def getgiftcodes(event, args, client):
 async def send_verbose_event(event_list, event, reply):
     chain = event
     for e in event_list:
-        await event.send_typing_status()
-        name = list(e.keys())[0]
-        dict_ = e.get(name)
+        name, dict_ = list(e.items())[0]
+
         if dict_["end_time"] < time.time():
             continue
-        link = dict_.get("link")
-        msg = f"*{dict_['name']}*"
-        msg += f"\n\n*Type:* {dict_['type_name']}"
+
+        await event.send_typing_status()
+        msg_parts = [
+            f"*{dict_['name']}*",
+            f"\n\n*Type:* {dict_['type_name']}",
+        ]
+
         if desc := dict_.get("description"):
             if "\\n" in desc:
                 desc = desc.encode().decode("unicode_escape")
-        msg += f"\n\n*Description:* {desc}" if desc else str()
-        msg += (
-            f"\n\n*Rewards:* {get_rewards(dict_['rewards'])}"
-            if get_rewards(dict_.get("rewards", []))
-            else str()
+            msg_parts.append(f"\n\n*Description:* {desc}")
+
+        if rewards := get_rewards(dict_.get("rewards", [])):
+            msg_parts.append(f"\n\n*Rewards:* {rewards}")
+
+        msg_parts.append(f"\n\n*Start date:* {get_date_from_ts(dict_['start_time'])}")
+        msg_parts.append(f"\n*End date:* {get_date_from_ts(dict_['end_time'])}")
+
+        time_left = (
+            dict_["start_time"] - time.time()
+            if dict_.get("upcoming")
+            else dict_["end_time"] - time.time()
         )
-        msg += f"\n\n*Start date:* {get_date_from_ts(dict_['start_time'])}"
-        msg += f"\n*End date:* {get_date_from_ts(dict_['end_time'])}"
-        if dict_.get("upcoming"):
-            strt = "Starts in:"
-            tl = dict_["start_time"] - time.time()
-        else:
-            strt = "Time left:"
-            tl = dict_["end_time"] - time.time()
-        msg += f"\n\n*{strt}* *{time_formatter(tl)}*"
+        msg_parts.append(f"\n\n{'Starts in:' if dict_.get('upcoming') else 'Time left:'} *{time_formatter(time_left)}*")
+
+        msg = "".join(msg_parts)
         await event.send_typing_status(False)
-        if link:
-            chain = await clean_reply(
-                chain,
-                reply,
-                "reply_photo",
-                photo=link,
-                caption=msg,
-            )
+
+        if link := dict_.get("link"):
+            chain = await clean_reply(chain, reply, "reply_photo", photo=link, caption=msg)
         else:
             chain = await clean_reply(chain, reply, "reply", msg)
+
         reply = None
         await asyncio.sleep(3)
 
 
+def extract_event_data(items, upcoming=False):
+    event_list = []
+    temp_dict = {}
+
+    for item in items:
+        if value := item.find("img"):
+            temp_dict["name"] = value.get("alt") or item.getText()
+            link = value.get("src", "").replace("data-src", "src")
+            temp_dict["link"] = link[: link.find(".png") + 4] if ".png" in link else link
+
+        elif value := item.get("data-sort-value"):
+            mid = len(value) // 2
+            temp_dict["start_time"] = get_timestamp(value[:mid])
+            temp_dict["end_time"] = get_timestamp(value[mid:])
+
+        else:
+            temp_dict["type_name"] = item.getText()
+            if upcoming:
+                temp_dict["upcoming"] = True
+            event_list.append({temp_dict["name"]: temp_dict})
+            temp_dict = {}
+
+    return event_list
+
+
 async def get_events(event, args, client):
     """
-    Get list of current and upcoming genshin events
+    Get list of current and upcoming Genshin events
     Argument:
         -v: Get events with images
     """
-    status = None
     user = event.from_user.id
-    if not user_is_owner(user):
-        if not pm_is_allowed(event):
-            return
-        if not user_is_allowed(user):
-            return
+    if not user_is_owner(user) and not (pm_is_allowed(event) and user_is_allowed(user)):
+        return
+
     try:
         status = await event.reply("*Fetching events…*")
-        api = "https://api.ennead.cc/mihoyo/genshin/calendar"
-        link = "https://genshin-impact.fandom.com/wiki/Event"
-        await event.send_typing_status()
-        response = await get_gi_info(get=api)
-        events = response.get("events")
-        web = await get_text(link)
-        soup = BeautifulSoup(web, "html.parser")
+        api_response = await get_gi_info(get="https://api.ennead.cc/mihoyo/genshin/calendar")
+        wiki_html = await get_text("https://genshin-impact.fandom.com/wiki/Event")
+
+        soup = BeautifulSoup(wiki_html, "html.parser")
         tables = soup.find_all("table", class_="wikitable sortable")
-        current_list = []
-        upcoming_list = []
-        event_list = []
-        temp_dict = {}
-        # Build initially event list
-        if events:
-            for event_ in events:
-                event_list.append({event_.get("name"): event_})
 
-        # Get Current Events
-        items = tables[0].find_all("td")
-        for item in items:
-            if value := item.find("img"):
-                temp_dict.update({"name": item.getText()})
-                link = value.get("src", str())
-                if link.startswith("data"):
-                    link = value.get("data-src", str())
-                if link:
-                    index = link.find(".png")
-                    link = link[: index + 4]
-                temp_dict.update({"link": link})
-            elif value := item.get("data-sort-value"):
-                svalue = get_timestamp(value[: len(value) // 2])
-                evalue = get_timestamp(value[len(value) // 2 :])
-                temp_dict.update({"start_time": svalue})
-                temp_dict.update({"end_time": evalue})
-            else:
-                value = item.getText()
-                temp_dict.update({"type_name": value})
-                current_list.append({temp_dict.get("name"): temp_dict})
-                temp_dict = {}
+        event_list = [{event_["name"]: event_} for event_ in api_response.get("events", [])]
+        current_events = extract_event_data(tables[0].find_all("td"))
+        upcoming_events = extract_event_data(tables[1].find_all("td"), upcoming=True)
 
-        # Get Upcoming Events
-        items = tables[1].find_all("td")
-        for item in items:
-            if value := item.find("img"):
-                temp_dict.update({"name": value.get("alt")})
-                link = value.get("src", str())
-                if link.startswith("data"):
-                    link = value.get("data-src", str())
-                if link:
-                    index = link.find(".png")
-                    link = link[: index + 4]
-                temp_dict.update({"link": link})
-            elif value := item.get("data-sort-value"):
-                svalue = get_timestamp(value[: len(value) // 2])
-                evalue = get_timestamp(value[len(value) // 2 :])
-                temp_dict.update({"start_time": svalue})
-                temp_dict.update({"end_time": evalue})
-            else:
-                value = item.getText()
-                temp_dict.update({"type_name": value, "upcoming": True})
-                upcoming_list.append({temp_dict.get("name"): temp_dict})
-                temp_dict = {}
+        # Combine events
+        name_to_event = {list(e.keys())[0]: e for e in event_list}
 
-        # Compare and combine events from different sources
-        for e in event_list:
-            name = list(e.keys())[0]
-            for l in upcoming_list:
-                if wiki_ver := l.get(name):
-                    if e[name].get("end_time"):
-                        wiki_ver.pop("upcoming")
-                    e[name].update(wiki_ver)
-                    continue
-            for c in current_list:
-                if wiki_ver := c.get(name):
-                    e[name].update(wiki_ver)
-                    continue
+        for new_events in (current_events, upcoming_events):
+            for e in new_events:
+                name, data = list(e.items())[0]
+                if name in name_to_event:
+                    name_to_event[name][name].update(data)
+                else:
+                    name_to_event[name] = e
 
-        for c in current_list:
-            name = list(c.keys())[0]
-            present = False
-            for e in event_list:
-                if e.get(name):
-                    present = True
-            if not present:
-                event_list.append(c)
+        final_event_list = list(name_to_event.values())
 
-        await event.send_typing_status(False)
         await status.edit("*Listing Current & Upcoming Events…*")
 
         if args == "-v":
-            return await send_verbose_event(event_list, event, event.reply_to_message)
+            return await send_verbose_event(final_event_list, event, event.reply_to_message)
 
-        await event.send_typing_status()
+        # Non-verbose output
         msg = "*List of Current & Upcoming Events:*"
-        for e in event_list:
-            name = list(e.keys())[0]
-            dict_ = e.get(name)
+        for e in final_event_list:
+            name, dict_ = list(e.items())[0]
             if dict_["end_time"] < time.time():
                 continue
-            msg += f"\n\n*⁍ {dict_['name']}*"
-            msg += f"\n*Type:* {dict_['type_name']}"
+
+            msg_parts = [
+                f"\n\n*⁍ {dict_['name']}*",
+                f"\n*Type:* {dict_['type_name']}",
+            ]
+
             if desc := dict_.get("description"):
                 if "\\n" in desc:
                     desc = desc.encode().decode("unicode_escape")
-            msg += f"\n{desc}" if desc else str()
-            msg += (
-                f"\n*Rewards:* {get_rewards(dict_['rewards'])}"
-                if get_rewards(dict_.get("rewards", []))
-                else str()
+                msg_parts.append(f"\n{desc}")
+
+            if rewards := get_rewards(dict_.get("rewards", [])):
+                msg_parts.append(f"\n*Rewards:* {rewards}")
+
+            msg_parts.append(f"\nStart date: {get_date_from_ts(dict_['start_time'])}")
+            msg_parts.append(f"\nEnd date: {get_date_from_ts(dict_['end_time'])}")
+
+            time_left = (
+                dict_["start_time"] - time.time()
+                if dict_.get("upcoming")
+                else dict_["end_time"] - time.time()
             )
-            msg += f"\nStart date: {get_date_from_ts(dict_['start_time'])}"
-            msg += f"\nEnd date: {get_date_from_ts(dict_['end_time'])}"
-            if dict_.get("upcoming"):
-                strt = "Starts in:"
-                tl = dict_["start_time"] - time.time()
-            else:
-                strt = "Time left:"
-                tl = dict_["end_time"] - time.time()
-            msg += f"\n*{strt}* *{time_formatter(tl)}*"
-        await event.send_typing_status(False)
+            msg_parts.append(f"\n*{'Starts in:' if dict_.get('upcoming') else 'Time left:'}* *{time_formatter(time_left)}*")
+
+            msg += "".join(msg_parts)
+
         await event.reply(msg)
-    except Exception:
-        await logger(Exception)
+
+    except Exception as e:
+        await logger(e)
     finally:
         if status:
             await asyncio.sleep(3)
             await status.delete()
-
-
-def get_stuff(name):
-    msg = str()
-    for thing in something:
-        msg += thing[name]
-        msg += ", "
-    return msg.strip(", ")
-
-
-def get_rewards(rewards):
-    msg = str()
-    for reward in rewards:
-        msg += reward["name"]
-        msg += f" x {reward['amount']}" if reward["amount"] else str()
-        msg += ", "
-    return msg.strip(", ")
