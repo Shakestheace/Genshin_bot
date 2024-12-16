@@ -542,7 +542,9 @@ async def get_events(event, args, client):
         for item in items:
             if value := item.find("img"):
                 temp_dict.update({"name": value.get("alt")})
-                link = value.get("src")
+                link = value.get("src", str())
+                if link.startswith("data"):
+                    link = value.get("data-src", str())
                 if link:
                     index = link.find(".png")
                     link = link[: index + 4]
