@@ -1,5 +1,4 @@
 import asyncio
-import datetime
 import io
 import itertools
 import time
@@ -8,13 +7,7 @@ from bs4 import BeautifulSoup
 from PIL import Image
 
 from bot.config import bot
-from bot.utils.bot_utils import (
-    get_date_from_ts,
-    get_json,
-    get_text,
-    get_timestamp,
-    time_formatter,
-)
+from bot.utils.bot_utils import get_json, get_text, get_timestamp, time_formatter
 from bot.utils.db_utils import save2db2
 from bot.utils.gi_utils import (
     async_dl,
@@ -525,9 +518,9 @@ async def get_events(event, args, client):
             msg += f"\nStart date:{date_from_ts(dict_['start_time'])}"
             msg += f"\nEnd date:{date_from_ts(dict_['end_time'])}"
             if dict_.get("upcoming"):
-                tl = dict_['start_time'] - time.time()
+                tl = dict_["start_time"] - time.time()
             else:
-                tl = dict_['end_time'] - time.time()
+                tl = dict_["end_time"] - time.time()
             msg += f"\n*Time left:* *{time_formatter(tl)}*"
         await event.reply(msg)
     except Exception:
