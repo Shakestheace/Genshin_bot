@@ -519,9 +519,17 @@ async def get_events(event, args, client):
             dict_ = e.get(name)
             msg += f"\n\n*⁍ {dict_['name']}*"
             msg += f"\n*Type:* {dict_['type_name']}"
-            desc = dict_['description'].replace("\\\\", "\\") if dict_['description'] else str()
+            desc = (
+                dict_["description"].replace("\\\\", "\\")
+                if dict_["description"]
+                else str()
+            )
             msg += f"\n{desc}" if desc else str()
-            msg += f"\n*Rewards:* {get_rewards(dict_['rewards'])}" if get_rewards(dict_['rewards']) else str()
+            msg += (
+                f"\n*Rewards:* {get_rewards(dict_['rewards'])}"
+                if get_rewards(dict_["rewards"])
+                else str()
+            )
             msg += f"\nStart date: {get_date_from_ts(dict_['start_time'])}"
             msg += f"\nEnd date: {get_date_from_ts(dict_['end_time'])}"
             if dict_.get("upcoming"):
