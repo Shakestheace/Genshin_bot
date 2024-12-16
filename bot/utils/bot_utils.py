@@ -119,7 +119,7 @@ def get_timestamp(date: str):
 
 def get_date_from_ts(timestamp):
     date = datetime.datetime.fromtimestamp(timestamp, tz)
-    return date.strftime("%d %b %Y %H:%M %p")
+    return date.strftime("%d %b %Y %I:%M %p")
 
 
 def time_formatter(seconds: float) -> str:

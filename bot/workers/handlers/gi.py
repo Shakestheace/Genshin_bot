@@ -469,7 +469,7 @@ async def get_events(event, args, client):
         items = tables[0].find_all("td")
         for item in items:
             if value := item.find("img"):
-                temp_dict.update({"name": value.getText()})
+                temp_dict.update({"name": item.getText()})
             elif value := item.get("data-sort-value"):
                 svalue = get_timestamp(value[: len(value) // 2])
                 evalue = get_timestamp(value[len(value) // 2 :])
@@ -485,7 +485,8 @@ async def get_events(event, args, client):
         items = tables[1].find_all("td")
         for item in items:
             if value := item.find("img"):
-                temp_dict.update({"name": value.get("alt")})
+                temp_dict.update({"name": item.getText()})
+                # temp_dict.update({"name": value.get("alt")})
             elif value := item.get("data-sort-value"):
                 svalue = get_timestamp(value[: len(value) // 2])
                 evalue = get_timestamp(value[len(value) // 2 :])
@@ -512,6 +513,15 @@ async def get_events(event, args, client):
                 if wiki_ver := c.get(name):
                     e[name].update(wiki_ver)
                     continue
+        
+        for l in upcoming_list:
+            name = list(l.keys())[0]
+            present = False
+            for e in event_list:
+                if e.get(name):
+                    present = True
+            if not present:
+                event_list.append(l)
 
         msg = "*Current Events:*"
         for e in event_list:
@@ -519,12 +529,8 @@ async def get_events(event, args, client):
             dict_ = e.get(name)
             msg += f"\n\n*⁍ {dict_['name']}*"
             msg += f"\n*Type:* {dict_['type_name']}"
-            desc = (
-                dict_["description"].encode().decode("unicode_escape")
-                if dict_["description"]
-                else str()
-            )
-            msg += f"\n{desc}" if desc else str()
+            desc = dict_['description'] if dict_['description'] else str()
+            msg += f"\n{desc.encode().decode('unicode_escape')}" if "\\n" in desc else desc
             msg += (
                 f"\n*Rewards:* {get_rewards(dict_['rewards'])}"
                 if get_rewards(dict_["rewards"])
@@ -533,10 +539,12 @@ async def get_events(event, args, client):
             msg += f"\nStart date: {get_date_from_ts(dict_['start_time'])}"
             msg += f"\nEnd date: {get_date_from_ts(dict_['end_time'])}"
             if dict_.get("upcoming"):
+                strt = "Starts in:"
                 tl = dict_["start_time"] - time.time()
             else:
+                strt = "Time left:"
                 tl = dict_["end_time"] - time.time()
-            msg += f"\n*Time left:* *{time_formatter(tl)}*"
+            msg += f"\n*{strt}* *{time_formatter(tl)}*"
         await event.reply(msg)
     except Exception:
         await logger(Exception)
